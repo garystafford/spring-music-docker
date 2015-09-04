@@ -1,11 +1,19 @@
 ```bash
+git clone https://github.com/garystafford/spring-music-docker.git
+cd spring-music-docker
+
 docker-machine create --driver virtualbox springmusic --debug
 
 docker-machine env springmusic
 eval "$(docker-machine env springmusic)"
 
+sh ./pull_build_artifacts.sh
+
 docker-compose -f docker-compose.yml -p music up -d
 
+curl -I --url $(docker-machine ip springmusic)
+
+# to remove proxy/app/db images and containers
 docker ps -a --no-trunc | grep 'music' | awk '{print $1}' | xargs -r --no-run-if-empty docker stop && \
 docker ps -a --no-trunc | grep 'music' | awk '{print $1}' | xargs -r --no-run-if-empty docker rm && \
 docker images --no-trunc | grep 'music' | grep -v 'logspout' | awk '{print $3}' | xargs -r --no-run-if-empty docker rmi -f && \
