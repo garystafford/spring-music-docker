@@ -1,0 +1,62 @@
+########################################################################
+#
+# title:       Docker Compose YAML file for tw-cn-ip
+# author:      Gary A. Stafford (https://programmaticponderings.com)
+# url:         https://github.com/garystafford/tw-cn-ip-build-deploy.git  
+# description: Builds single VM, multi-container, 'Training' environment
+#              with debugging ports open and extra header information
+# to run:      docker-compose -f docker-compose.yml -p music up -d
+#
+########################################################################
+
+proxy:
+  build: nginx/
+  ports:
+   - "80:80"
+  links:
+   - app01
+   - app02
+  hostname: "proxy"
+
+app01:
+  build: tomcat/
+  expose:
+   - "8080"
+  ports:
+   - "8180:8080"
+  links:
+   - nosqldb
+  hostname: "app01"
+
+app02:
+  build: tomcat/
+  expose:
+   - "8080"
+  ports:
+   - "8280:8080"
+  links:
+   - nosqldb
+  hostname: "app01"
+
+nosqldb:
+  image: mongo:latest
+  hostname: "nosqldb"
+
+# elk:
+#   build: elk/
+#   ports:
+#    - "8081:80"
+#    - "8082:9200"
+#   expose:
+#    - "5000/upd"
+
+# logspout:
+#   build: logspout/
+#   volumes:
+#    - "/var/run/docker.sock:/tmp/docker.sock"
+#   links:
+#    - elk
+#   ports:
+#    - "8083:80"
+#   environment:
+#     - ROUTE_URIS=logstash://elk:5000

@@ -1,0 +1,36 @@
+########################################################################
+#
+# title:       Docker Compose YAML file for tw-cn-ip
+# author:      Gary A. Stafford (https://programmaticponderings.com)
+# url:         https://github.com/garystafford/tw-cn-ip-build-deploy.git  
+# description: Builds multi-VM Docker Swarm cluster, 'Producion' environment,
+#              using (2) pre-built images, located on Docker Hub
+# to run:      docker-compose -f docker-compose-swarm.yml -p twcnip up -d --x-smart-recreate
+# to scale:    docker-compose -f docker-compose-swarm.yml -p twcnip scale app=2 up -d --x-smart-recreate
+#
+########################################################################
+
+proxy:
+  image: garystafford/music_proxy
+  ports:
+   - "80:80"
+  hostname: "proxy"
+  environment:
+   - "constraint:itype==proxy"
+   - "TERM=xterm"
+
+app:
+  image: garystafford/music_app
+  ports:
+   - "8080"
+  hostname: "app"
+  environment:
+    - "constraint:itype==app"
+
+data:
+  image: garystafford/music_db
+  ports:
+   - "27017"
+  hostname: "db"
+  environment:
+    - "constraint:itype==db"
