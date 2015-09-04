@@ -42,21 +42,21 @@ nosqldb:
   image: mongo:latest
   hostname: "nosqldb"
 
-# elk:
-#   build: elk/
-#   ports:
-#    - "8081:80"
-#    - "8082:9200"
-#   expose:
-#    - "5000/upd"
+elk:
+  build: elk/
+  ports:
+   - "8081:80"
+   - "8082:9200"
+  expose:
+   - "5000/upd"
 
-# logspout:
-#   build: logspout/
-#   volumes:
-#    - "/var/run/docker.sock:/tmp/docker.sock"
-#   links:
-#    - elk
-#   ports:
-#    - "8083:80"
-#   environment:
-#     - ROUTE_URIS=logstash://elk:5000
+logspout:
+  build: logspout/
+  volumes:
+   - "/var/run/docker.sock:/tmp/docker.sock"
+  links:
+   - elk
+  ports:
+   - "8083:80"
+  environment:
+    - ROUTE_URIS=logstash://elk:5000

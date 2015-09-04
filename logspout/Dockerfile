@@ -9,4 +9,4 @@ FROM gliderlabs/logspout:master
 
 MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
 
-ENV REFRESHED_AT 2015-07-05
+ENV REFRESHED_AT 2015-09-02

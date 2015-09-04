@@ -4,6 +4,8 @@ FROM tomcat:latest
 
 MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
 
+ENV REFRESHED_AT 2015-09-02
+
 ENV appfile spring-music.war
 
 RUN mv /usr/local/tomcat/webapps/ROOT /usr/local/tomcat/webapps/_ROOT

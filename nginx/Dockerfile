@@ -4,6 +4,8 @@ FROM nginx:latest
 
 MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
 
+ENV REFRESHED_AT 2015-09-02
+
 ENV staticfile spring-music-static.zip
 
 COPY build-artifacts/${staticfile} /tmp/${staticfile}
