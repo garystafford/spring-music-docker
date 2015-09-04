@@ -36,4 +36,4 @@ build/
 
 *.war
 *.zip
-/build_artifacts/
+/build-artifacts/
