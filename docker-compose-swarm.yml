@@ -1,14 +1,18 @@
 ########################################################################
 #
-# title:       Docker Compose YAML file for tw-cn-ip
+# title:       Docker Compose YAML file for spring-music
 # author:      Gary A. Stafford (https://programmaticponderings.com)
-# url:         https://github.com/garystafford/tw-cn-ip-build-deploy.git  
+# url:         https://github.com/garystafford/spring-music-docker.git  
 # description: Builds multi-VM Docker Swarm cluster, 'Producion' environment,
 #              using (2) pre-built images, located on Docker Hub
-# to run:      docker-compose -f docker-compose-swarm.yml -p twcnip up -d --x-smart-recreate
-# to scale:    docker-compose -f docker-compose-swarm.yml -p twcnip scale app=2 up -d --x-smart-recreate
+# to run:      docker-compose -f docker-compose-swarm.yml -p music up -d
+# to scale:    docker-compose -f docker-compose-swarm.yml -p music scale app=2 up -d
 #
 ########################################################################
+
+
+### NOT FINISHED - DO NOT USE ###
+
 
 proxy:
   image: garystafford/music_proxy
@@ -27,10 +31,10 @@ app:
   environment:
     - "constraint:itype==app"
 
-data:
-  image: garystafford/music_db
+nosqldb:
+  image: garystafford/music_nosqldb
   ports:
    - "27017"
-  hostname: "db"
+  hostname: "nosqldb"
   environment:
-    - "constraint:itype==db"
+    - "constraint:itype==nosqldb"

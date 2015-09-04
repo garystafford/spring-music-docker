@@ -1,9 +1,9 @@
 ########################################################################
 #
-# title:       Docker Compose YAML file for tw-cn-ip
+# title:       Docker Compose YAML file for spring-music
 # author:      Gary A. Stafford (https://programmaticponderings.com)
-# url:         https://github.com/garystafford/tw-cn-ip-build-deploy.git  
-# description: Builds single VM, multi-container, 'Training' environment
+# url:         https://github.com/garystafford/spring-music-docker.git  
+# description: Builds single VM, multi-container environment
 #              with debugging ports open and extra header information
 # to run:      docker-compose -f docker-compose.yml -p music up -d
 #
