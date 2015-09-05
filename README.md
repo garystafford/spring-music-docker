@@ -8,8 +8,17 @@ docker-machine create --driver virtualbox springmusic --debug
 docker-machine env springmusic && \
 eval "$(docker-machine env springmusic)"
 
+# mongo data will be stored on external host
+# as opposed to within volitile contianer
+docker ssh springmusic
+mkdir /opt/mongodb
+exit
+
 # pulls build artifacts from other repo, built by Travis CI
 sh ./pull_build_artifacts.sh
+
+# builds Dockerfiles from templates
+sh ./buid_templates.sh
 
 docker-compose -f docker-compose.yml -p music up -d
 

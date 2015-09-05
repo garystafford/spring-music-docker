@@ -6,7 +6,7 @@ MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
 
 ENV REFRESHED_AT 2015-09-02
 
-ENV staticfile spring-music-static-1.9.zip
+ENV staticfile {{ zip_file }}
 
 COPY build-artifacts/${staticfile} /tmp/${staticfile}
 

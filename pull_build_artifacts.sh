@@ -4,9 +4,8 @@
 #
 # title:          Pull Latest Build Artifacts Script
 # author:         Gary A. Stafford (https://programmaticponderings.com)
-# url:            https://github.com/garystafford/virtual-vehicles-docker  
-# description:    Pull latest build artifacts from virtual-vehicles-demo repo
-#                 and build Dockerfile and YAML templates
+# url:            https://github.com/garystafford/sprint-music-docker  
+# description:    Pull latest build artifacts from sprint-music-docker repo
 #
 # to run:         sh pull_build_artifacts.sh
 #

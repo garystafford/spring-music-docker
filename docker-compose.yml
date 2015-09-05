@@ -39,8 +39,10 @@ app02:
   hostname: "app01"
 
 nosqldb:
-  image: mongo:latest
+  build: mongo/
   hostname: "nosqldb"
+  volumes:
+   - "/opt/mongodb:/data/db"
 
 elk:
   build: elk/
