@@ -1,5 +1,10 @@
-### Spring Music Application
-##### Built  with Docker Machine and Compose
+## Spring Music Application
+[![Build Status](https://travis-ci.org/garystafford/spring-music.svg?branch=master)](https://travis-ci.org/garystafford/spring-music)
+
+#### Built  with Docker Machine and Compose
+<p class="attachment-entry">
+  <a href="https://programmaticponderings.wordpress.com/?attachment_id=3459" title="Spring Music Application&nbsp;Environment" rel="attachment"><img width="620" height="259" src="https://programmaticponderings.files.wordpress.com/2015/09/vb_machine_vm.png?w=620" alt="Spring Music Application Environment"></a>
+</p>
 
 Complete set of commands to pull and build project:
 
