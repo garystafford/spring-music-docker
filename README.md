@@ -28,8 +28,8 @@ curl -I --url $(docker-machine ip springmusic)
 
 ```bash
 # to remove proxy/app/db images and containers
-docker ps -a --no-trunc | grep 'music' | awk '{print $1}' | xargs -r --no-run-if-empty docker stop && \
-docker ps -a --no-trunc | grep 'music' | awk '{print $1}' | xargs -r --no-run-if-empty docker rm && \
+docker ps -a --no-trunc  | grep 'music' | awk '{print $1}'   | xargs -r --no-run-if-empty docker stop && \
+docker ps -a --no-trunc  | grep 'music' | awk '{print $1}'   | xargs -r --no-run-if-empty docker rm && \
 docker images --no-trunc | grep 'music' | grep -v 'logspout' | awk '{print $3}' | xargs -r --no-run-if-empty docker rmi -f && \
 docker images && echo && docker ps -a
 ```
