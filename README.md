@@ -18,7 +18,7 @@ exit
 sh ./pull_build_artifacts.sh
 
 # builds Dockerfiles from templates
-sh ./buid_templates.sh
+sh ./build_templates.sh
 
 docker-compose -f docker-compose.yml -p music up -d
 

@@ -6,9 +6,7 @@ MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
 
 ENV REFRESHED_AT 2015-09-02
 
-ENV appfile spring-music-1.9.war
-
-LABEL version="1.0"
+ENV appfile spring-music.war
 
 RUN mv /usr/local/tomcat/webapps/ROOT /usr/local/tomcat/webapps/_ROOT
 

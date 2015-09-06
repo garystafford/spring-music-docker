@@ -26,6 +26,7 @@ app01:
    - "8180:8080"
   links:
    - nosqldb
+   - elk
   hostname: "app01"
 
 app02:
@@ -36,6 +37,7 @@ app02:
    - "8280:8080"
   links:
    - nosqldb
+   - elk
   hostname: "app01"
 
 nosqldb:

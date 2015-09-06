@@ -1,4 +1,4 @@
-#http://stackoverflow.com/a/26878915/580268
+# MongoDB image with host-based data volume
 
 FROM mongo:latest
 
@@ -8,4 +8,5 @@ ENV REFRESHED_AT 2015-09-02
 
 VOLUME ["/data/db"]
 WORKDIR /data
+
 CMD ["mongod", "--smallfiles"]
