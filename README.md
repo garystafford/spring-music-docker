@@ -1,3 +1,8 @@
+### Spring Music Application
+##### Built  with Docker Machine and Compose
+
+Complete set of commands to pull and build project:
+
 ```bash
 # to pull and build project
 git clone https://github.com/garystafford/spring-music-docker.git && \
@@ -32,8 +37,14 @@ docker ps -a --no-trunc  | grep 'music' | awk '{print $1}'   | xargs -r --no-run
 docker ps -a --no-trunc  | grep 'music' | awk '{print $1}'   | xargs -r --no-run-if-empty docker rm && \
 docker images --no-trunc | grep 'music' | grep -v 'logspout' | awk '{print $3}' | xargs -r --no-run-if-empty docker rmi -f && \
 docker images && echo && docker ps -a
+``` 
+
+All of the above commands, after creating VM (`docker-machine create`), to pull build artifacts, build Dockerfiles, create containers, and test, can be executed with the following single script:
+```bash
+sh ./delete-pull-build.sh
 ```
 
+Resulting containers and images:
 ```text
 gstafford@gstafford-X555LA:~/NetBeansProjects/spring-music-docker$ docker ps -a
 CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS                                                  NAMES
