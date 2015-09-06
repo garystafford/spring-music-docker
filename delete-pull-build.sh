@@ -21,6 +21,9 @@ sh ./build_templates.sh
 # build images and containers
 docker-compose -f docker-compose.yml -p music up -d
 
+# wait for containers and apps to start
+sleep 15
+
 # quick test of project
 for i in {1..10}
 do
