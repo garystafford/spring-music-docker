@@ -7,7 +7,7 @@
 # url:            https://github.com/garystafford/sprint-music-docker  
 # description:    Pull latest build artifacts from sprint-music-docker repo
 #
-# to run:         sh pull_build_artifacts.sh
+# to run:         sh ./pull_build_artifacts.sh
 #
 ########################################################################
 
