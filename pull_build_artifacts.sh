@@ -2,10 +2,10 @@
 
 ########################################################################
 #
-# title:          Pull Latest Build Artifacts Script
+# title:          Pull Build Artifacts
 # author:         Gary A. Stafford (https://programmaticponderings.com)
 # url:            https://github.com/garystafford/sprint-music-docker  
-# description:    Pull latest build artifacts from sprint-music-docker repo
+# description:    Pulls latest build artifacts from sprint-music-docker repo
 #
 # to run:         sh ./pull_build_artifacts.sh
 #

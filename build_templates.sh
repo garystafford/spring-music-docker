@@ -2,12 +2,12 @@
 
 ########################################################################
 #
-# title:          Build Dockerfile teamplates
+# title:          Build Dockerfile Templates
 # author:         Gary A. Stafford (https://programmaticponderings.com)
 # url:            https://github.com/garystafford/sprint-music-docker  
 # description:    Build Dockerfile templates
 #
-# to run:         sh build_templates.sh
+# to run:         sh ./build_templates.sh
 #
 ########################################################################
 
