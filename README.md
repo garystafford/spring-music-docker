@@ -77,9 +77,11 @@ Lastly, the ELK Stack with Logspout, will aggregate both Docker and Java Log4j l
 
 All files necessary to build this project are stored in the [garystafford/spring-music-docker](https://github.com/garystafford/spring-music-docker) repository on GitHub. The Spring Music source code and build artifacts are stored in a seperate [garystafford/spring-music](https://github.com/garystafford/spring-music) repository, also on GitHub.
 
-Build artifacts are automatically built by [Travis CI](https://travis-ci.org) when changes are checked into the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. Travis CI then overwrites the build artifacts back to a [build artifact](https://github.com/garystafford/spring-music/tree/build-artifacts) branch of that same project. The build artifact branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project. The `.travis.yaml` file and `deploy.sh` script handles these functions:
+Build artifacts are automatically built by [Travis CI](https://travis-ci.org) when changes are checked into the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. Travis CI then overwrites the build artifacts back to a [build artifact](https://github.com/garystafford/spring-music/tree/build-artifacts) branch of that same project. The build artifact branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project. The `.travis.yaml` file, `gradle.build` file, and `deploy.sh` script handles these functions:
 
 ```yaml
+# .travis/yaml
+
 language: java
 jdk: oraclejdk7
 before_install:
@@ -94,10 +96,50 @@ env:
   - GH_REF: github.com/garystafford/spring-music.git
   - secure: <secure hash here>
 ```
+
+
+```groovy
+// gradle.build snippet
+// new Gradle build tasks
+
+task warNoStatic(type: War) {
+  // omit the version from the war file name
+  version = ''
+  exclude '**/assets/**'
+  manifest {
+    attributes \
+      'Manifest-Version': '1.0', \
+      'Created-By': currentJvm, \
+      'Gradle-Version': GradleVersion.current().getVersion(), \
+      'Implementation-Title': archivesBaseName + '.war', \
+      'Implementation-Version': artifact_version, \
+      'Implementation-Vendor': 'Gary A. Stafford'
+  }
+}
+
+task warCopy(type: Copy) {
+  from 'build/libs'
+  into 'build/distributions'
+  include '**/*.war'
+}
+
+task zipGetVersion (type: Task) {
+  ext.versionfile = new File("${projectDir}/src/main/webapp/assets/buildinfo.properties")
+  versionfile.text = 'build.version=' + artifact_version
+}
+
+task zipStatic(type: Zip) {
+  from 'src/main/webapp/assets'
+  appendix = 'static'
+  version = ''
+}
+```
   
   
 ```bash
 #!/bin/bash
+
+# deploy.sh
 # reference: https://gist.github.com/domenic/ec8b0fc8ab45f39403dd
 
 set -e # exit with nonzero exit code if anything fails
