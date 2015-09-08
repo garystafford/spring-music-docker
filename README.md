@@ -137,7 +137,7 @@ echo "Pulling build artifacts complete"
 
 Docker Images, such as NGINX, Tomcat, and MongoDB, used to build the project's images, and subsequently the containers, are all pulled from Docker Hub.
 
-Docker Machine builds a single VirtualBox VM. After building the VM, Docker Compose then builds and deploys (1) NGINX container, (2) load-balanced Tomcat containers, (1) MongoDB container, (1) ELK container, and (1) Logspout container, onto the VM. Docker Machine's VirtualBox driver provides a basic solution that can be run locally for testing and development. The Docker Compose YAML file reads as follows:
+Docker Machine builds a single VirtualBox VM. After building the VM, Docker Compose then builds and deploys (1) NGINX container, (2) load-balanced Tomcat containers, (1) MongoDB container, (1) ELK container, and (1) Logspout container, onto the VM. Docker Machine's VirtualBox driver provides a basic solution that can be run locally for testing and development. The `docker-compose.yml` for the project is as follows:
 ```yaml
 proxy:
   build: nginx/
