@@ -20,6 +20,19 @@ A few changes were necessary to the original Spring Music application to make it
 * Update versions of several dependencies, including Gradle to 2.6
 
 ### Application Architecture
+[![Kibana](https://programmaticponderings.files.wordpress.com/2015/09/kibana-spring-music.png)](https://programmaticponderings.files.wordpress.com/2015/09/kibana-spring-music.png "Kibana")
+
+**Application Technology Stack**
+
+* [Java](http://openjdk.java.net)
+* [Spring Framework](http://projects.spring.io/spring-framework)
+* [NGINX](http://nginx.org)
+* [Apache Tomcat](http://tomcat.apache.org)
+* [MongoDB](http://mongoDB.com)
+* [ELK Stack](https://www.elastic.co/products)
+* [Logspout](https://github.com/gliderlabs/logspout)
+* [Logspout-Logstash Adapter](https://github.com/looplab/logspout-logstash)
+
 The Spring Music web application's static content will be hosted by [NGINX](http://nginx.org) for increased performance. The application's WAR file will be hosted by [Apache Tomcat](http://tomcat.apache.org). Requests for non-static content will be proxied through a single instance of NGINX on the front-end, to one of two load-balanced Tomcat instances on the back-end. NGINX will also be configured to allow for browser caching of the static content, to further increase application performance. Reverse proxying and caching are configured thought NGINX's `default.conf` file's `server` configuration section:
 ```bash
 server {
@@ -48,20 +61,22 @@ The Spring Music application can be run with MySQL, Postgres, Oracle, MongoDB, R
 
 Lastly, the ELK Stack with Logspout, will aggregate both Docker and Java Log4j log entries, providing debugging and analytics to our demonstration. I've used the same method for Docker and Java Log4j log entries, as detailed in this previous [post](https://programmaticponderings.wordpress.com/2015/08/02/log-aggregation-visualization-and-analysis-of-microservices-using-elk-stack-and-logspout/).
 
-[![Kibana](https://programmaticponderings.files.wordpress.com/2015/09/kibana-spring-music.png)](https://programmaticponderings.files.wordpress.com/2015/09/kibana-spring-music.png "Kibana")
-
-**Application Technology Stack**
-
-* [Java](http://openjdk.java.net)
-* [Spring Framework](http://projects.spring.io/spring-framework)
-* [NGINX](http://nginx.org)
-* [Apache Tomcat](http://tomcat.apache.org)
-* [MongoDB](http://mongoDB.com)
-* [ELK Stack](https://www.elastic.co/products)
-* [Logspout](https://github.com/gliderlabs/logspout)
-* [Logspout-Logstash Adapter](https://github.com/looplab/logspout-logstash)
-
 ### Spring Music Environment
+[![Spring Music Application Environment](https://programmaticponderings.files.wordpress.com/2015/09/spring-music-machine.png)](https://programmaticponderings.files.wordpress.com/2015/09/spring-music-machine.png "Spring Music Application Environment")
+
+**Build, Deploy, Host Technology Stack**
+
+* [Gradle](https://gradle.org)
+* [GitHub](https://github.com)
+* [Travis CI](https://travis-ci.org)
+* [git](https://git-scm.com)
+* [Oracle VirtualBox](https://www.virtualbox.org)
+* [Docker](https://www.docker.com)
+* [Docker Compose](https://www.docker.com/docker-compose)
+* [Docker Machine](https://www.docker.com/docker-machine)
+* [Docker Hub](https://hub.docker.com)
+* _optional:_ [Amazon Web Services (AWS)](http://aws.amazon.com)
+
 All files necessary to build this project are stored in the [garystafford/spring-music-docker](https://github.com/garystafford/spring-music-docker) repository on GitHub. The Spring Music source code and build artifacts are stored in a seperate [garystafford/spring-music](https://github.com/garystafford/spring-music) repository, also on GitHub.
 
 Build artifacts are automatically built by [Travis CI](https://travis-ci.org) when changes are checked into the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. Travis CI then overwrites the build artifacts back to a [build artifact](https://github.com/garystafford/spring-music/tree/build-artifacts) branch of that same project. The build artifact branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project. The `.travis.yaml` file and `deploy.sh` script handles these functions:
@@ -184,21 +199,6 @@ logspout:
   ports: "8083:80"
   environment: ROUTE_URIS=logstash://elk:5000
 ```
-
-[![Spring Music Application Environment](https://programmaticponderings.files.wordpress.com/2015/09/spring-music-machine.png)](https://programmaticponderings.files.wordpress.com/2015/09/spring-music-machine.png "Spring Music Application Environment")
-
-**Build, Deploy, Host Technology Stack**
-
-* [Gradle](https://gradle.org)
-* [GitHub](https://github.com)
-* [Travis CI](https://travis-ci.org)
-* [git](https://git-scm.com)
-* [Oracle VirtualBox](https://www.virtualbox.org)
-* [Docker](https://www.docker.com)
-* [Docker Compose](https://www.docker.com/docker-compose)
-* [Docker Machine](https://www.docker.com/docker-machine)
-* [Docker Hub](https://hub.docker.com)
-* _optional:_ [Amazon Web Services (AWS)](http://aws.amazon.com)
 
 ### Building the Environment
 Before continuing, ensure you have nothing running on ports `80`, `8080`, `8081`, `8082`, and `8083`. Also, make sure VirtualBox, Docker, Docker Compose, Docker Machine, VirtualBox, cURL, and git are all pre-installed and running.
