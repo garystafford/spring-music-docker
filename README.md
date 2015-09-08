@@ -387,6 +387,7 @@ _* The Tomcat user name is `admin` and the password is `t0mcat53rv3r`._
 * [Understanding Nginx HTTP Proxying, Load Balancing, Buffering, and Caching](https://www.digitalocean.com/community/tutorials/understanding-nginx-http-proxying-load-balancing-buffering-and-caching)
 [Common conversion patterns for log4j's PatternLayout](http://www.codejava.net/coding/common-conversion-patterns-for-log4js-patternlayout)
 * [Spring @PropertySource example](http://www.mkyong.com/spring/spring-propertysources-example)
+* [Java log4j logging](http://help.papertrailapp.com/kb/configuration/java-log4j-logging/)
 
 
 #### To Remove Image and Containers During Development and Testing
