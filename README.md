@@ -12,11 +12,11 @@ In this post, we will demonstrate how to build, deploy, and host a multi-tier Ja
 A few changes were necessary to the original Spring Music application to make it work for the this demonstration. At a high-level, the changes included:
 
 * Modify MongoDB configuration class to work with non-local MongoDB instances
-* Add Gradle 'warNoStatic' task to build WAR file without the static assets, which will be host separately in NGINX
-* Create new Gradle task, 'zipStatic', to ZIP up the application's static assets for deployment to NGINX
+* Add Gradle `warNoStatic` task to build WAR file without the static assets, which will be host separately in NGINX
+* Create new Gradle task, `zipStatic`, to ZIP up the application's static assets for deployment to NGINX
 * Add versioning scheme for build artifacts
-* Add context.xml file and MANIFEST.MF file to the WAR file
-* Add log4j syslog appender to send long entries to Logstash
+* Add `context.xml` file and `MANIFEST.MF` file to the WAR file
+* Add log4j `syslog` appender to send log entries to Logstash
 * Update versions of several dependencies, including Gradle to 2.6
 
 ### Application Architecture
