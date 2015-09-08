@@ -79,9 +79,8 @@ All files necessary to build this project are stored in the [garystafford/spring
 
 Build artifacts are automatically built by [Travis CI](https://travis-ci.org) when changes are checked into the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. Travis CI then overwrites the build artifacts back to a [build artifact](https://github.com/garystafford/spring-music/tree/build-artifacts) branch of that same project. The build artifact branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project. The `.travis.yaml` file, `gradle.build` file, and `deploy.sh` script handles these functions:
 
+.travis.yaml file:
 ```yaml
-# .travis/yaml
-
 language: java
 jdk: oraclejdk7
 before_install:
@@ -97,9 +96,8 @@ env:
   - secure: <secure hash here>
 ```
 
-
+gradle.build file snippet:
 ```groovy
-// gradle.build snippet
 // new Gradle build tasks
 
 task warNoStatic(type: War) {
@@ -124,7 +122,8 @@ task warCopy(type: Copy) {
 }
 
 task zipGetVersion (type: Task) {
-  ext.versionfile = new File("${projectDir}/src/main/webapp/assets/buildinfo.properties")
+  ext.versionfile = 
+    new File("${projectDir}/src/main/webapp/assets/buildinfo.properties")
   versionfile.text = 'build.version=' + artifact_version
 }
 
@@ -135,11 +134,10 @@ task zipStatic(type: Zip) {
 }
 ```
   
-  
+deploy.sh file:
 ```bash
 #!/bin/bash
 
-# deploy.sh
 # reference: https://gist.github.com/domenic/ec8b0fc8ab45f39403dd
 
 set -e # exit with nonzero exit code if anything fails
