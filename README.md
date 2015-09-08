@@ -22,7 +22,7 @@ A few changes were necessary to the original Spring Music application to make it
 ### Application Architecture
 [![Kibana](https://programmaticponderings.files.wordpress.com/2015/09/kibana-spring-music.png)](https://programmaticponderings.files.wordpress.com/2015/09/kibana-spring-music.png "Kibana")
 
-**Application Technology Stack**
+**Application Technology Stack**  
 * [Java](http://openjdk.java.net)
 * [Spring Framework](http://projects.spring.io/spring-framework)
 * [NGINX](http://nginx.org)
@@ -63,7 +63,7 @@ Lastly, the ELK Stack with Logspout, will aggregate both Docker and Java Log4j l
 ### Spring Music Environment
 [![Spring Music Application Environment](https://programmaticponderings.files.wordpress.com/2015/09/spring-music-machine.png)](https://programmaticponderings.files.wordpress.com/2015/09/spring-music-machine.png "Spring Music Application Environment")
 
-**Build, Deploy, Host Technology Stack**
+**Build, Deploy, Host Technology Stack**  
 * [Gradle](https://gradle.org)
 * [GitHub](https://github.com)
 * [Travis CI](https://travis-ci.org)
@@ -241,7 +241,7 @@ done
 
 By simply changing the driver to AWS EC2 and providing your AWS credentials, the same environment can be built on AWS within a single EC2 instance. The 'springmusic' environment has been fully tested both locally with VirtualBox, as well as on AWS.
 
-**Results**
+**Results**  
 Resulting containers and images:
 ```text
 gstafford@gstafford-X555LA:$ docker ps -a
