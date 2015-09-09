@@ -13,9 +13,9 @@ proxy:
   build: nginx/
   ports:
    - "80:80"
-  links:
-   - app01
-   - app02
+  # links:
+  #  - app01
+  #  - app02
   hostname: "proxy"
 
 app01:
@@ -24,9 +24,9 @@ app01:
    - "8080"
   ports:
    - "8180:8080"
-  links:
-   - nosqldb
-   - elk
+  # links:
+  #  - nosqldb
+  #  - elk
   hostname: "app01"
 
 app02:
@@ -35,9 +35,9 @@ app02:
    - "8080"
   ports:
    - "8280:8080"
-  links:
-   - nosqldb
-   - elk
+  # links:
+  #  - nosqldb
+  #  - elk
   hostname: "app01"
 
 nosqldb:
@@ -58,9 +58,9 @@ logspout:
   build: logspout/
   volumes:
    - "/var/run/docker.sock:/tmp/docker.sock"
-  links:
-   - elk
+  # links:
+  #  - elk
   ports:
    - "8083:80"
   environment:
-    - ROUTE_URIS=logstash://elk:5000
+    - ROUTE_URIS=logstash://music_elk_1:5000

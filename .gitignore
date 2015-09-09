@@ -37,3 +37,4 @@ build/
 *.war
 *.zip
 /build-artifacts/
+gradle-app.setting
