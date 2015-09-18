@@ -6,12 +6,12 @@ MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
 
 ENV REFRESHED_AT 2015-09-02
 
-ENV staticfile spring-music-static.zip
+ENV STATIC_FILE spring-music-static.zip
 
-COPY build-artifacts/${staticfile} /tmp/${staticfile}
+COPY build-artifacts/${STATIC_FILE} /tmp/${STATIC_FILE}
 
 RUN apt-get update -y && \
   apt-get install unzip nano -y && \
-  unzip /tmp/${staticfile} -d /usr/share/nginx/assets/
+  unzip /tmp/${STATIC_FILE} -d /usr/share/nginx/assets/
 
 COPY default.conf /etc/nginx/conf.d/default.conf

@@ -6,9 +6,9 @@ MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
 
 ENV REFRESHED_AT 2015-09-02
 
-ENV appfile {{ war_file }}
+ENV APP_FILE {{ war_file }}
 
 RUN mv /usr/local/tomcat/webapps/ROOT /usr/local/tomcat/webapps/_ROOT
 
 COPY tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
-COPY ./build-artifacts/${appfile} /usr/local/tomcat/webapps/ROOT.war
+COPY ./build-artifacts/${APP_FILE} /usr/local/tomcat/webapps/ROOT.war

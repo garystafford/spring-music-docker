@@ -1,0 +1,22 @@
+iptables -t nat -L -n
+sudo iptables -L -v
+ip route
+ip addr
+
+lsof -i tcp; lsof -i udp;
+lsof -i :80
+
+weave ps
+weave config
+weave status
+
+brctl show
+brctl showstp docker0
+
+netstat -nat |grep -v CLOSE_WAIT
+netstat -tupln
+netstat -anp | grep LISTEN
+
+https://www.debian-administration.org/article/184/How_to_find_out_which_process_is_listening_upon_a_port
+http://linux-ip.net/html/tools-ip-route.html
+https://blog.abevoelker.com/why-i-dont-use-docker-much-anymore/

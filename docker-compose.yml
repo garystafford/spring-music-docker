@@ -13,10 +13,6 @@ proxy:
   build: nginx/
   ports:
    - "80:80"
-  # links:
-  #  - app01
-  #  - app02
-  hostname: "proxy"
 
 app01:
   build: tomcat/
@@ -24,10 +20,6 @@ app01:
    - "8080"
   ports:
    - "8180:8080"
-  # links:
-  #  - nosqldb
-  #  - elk
-  hostname: "app01"
 
 app02:
   build: tomcat/
@@ -35,14 +27,9 @@ app02:
    - "8080"
   ports:
    - "8280:8080"
-  # links:
-  #  - nosqldb
-  #  - elk
-  hostname: "app01"
 
 nosqldb:
   build: mongo/
-  hostname: "nosqldb"
   volumes:
    - "/opt/mongodb:/data/db"
 
@@ -58,8 +45,6 @@ logspout:
   build: logspout/
   volumes:
    - "/var/run/docker.sock:/tmp/docker.sock"
-  # links:
-  #  - elk
   ports:
    - "8083:80"
   environment:
