@@ -14,8 +14,8 @@ proxy:
   ports:
    - "80:80"
   volumes_from:
-   - "app01"
-   - "app02"
+   - app01
+   - app02
 
 app01:
   build: tomcat/
