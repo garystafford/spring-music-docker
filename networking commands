@@ -16,7 +16,3 @@ brctl showstp docker0
 netstat -nat |grep -v CLOSE_WAIT
 netstat -tupln
 netstat -anp | grep LISTEN
-
-https://www.debian-administration.org/article/184/How_to_find_out_which_process_is_listening_upon_a_port
-http://linux-ip.net/html/tools-ip-route.html
-https://blog.abevoelker.com/why-i-dont-use-docker-much-anymore/

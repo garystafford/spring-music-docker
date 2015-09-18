@@ -12,7 +12,13 @@
 ########################################################################
 
 # clone project
-git clone https://github.com/garystafford/spring-music-docker.git && \
+# install weave v1.1.0
+curl -L git.io/weave -o /usr/local/bin/weave && 
+chmod a+x /usr/local/bin/weave && 
+weave version
+
+# clone project
+git clone https://github.com/garystafford/spring-music-docker.git && 
 cd spring-music-docker
 
 # build VM
@@ -22,22 +28,34 @@ docker-machine create --driver virtualbox springmusic --debug
 docker ssh springmusic mkdir /opt/mongodb
 
 # set new environment
-docker-machine env springmusic && \
+docker-machine env springmusic && 
 eval "$(docker-machine env springmusic)"
 
-# pull build artifacts from other repo, built by Travis CI
+# launch weave and weaveproxy/weaveDNS containers
+weave launch
+tlsargs=$(docker-machine ssh springmusic \
+  "cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '")
+weave launch-proxy $tlsargs
+eval "$(weave env)"
+
+# test/confirm weave status
+weave status 
+docker logs weaveproxy
+
+# pull build artifacts, built by Travis CI, 
+# from source code repository
 sh ./pull_build_artifacts.sh
 
 # build images and containers
 docker-compose -f docker-compose.yml -p music up -d
 
-# configure local DNS resolution for application URL
-#echo "$(docker-machine ip springmusic)   springmusic.com" | sudo tee --append /etc/hosts
-
-# wait for container apps to start
+# wait for container apps to fully start
 sleep 15
 
-# run quick test of project
+# test weaveDNS (should list entries for all containers)
+docker exec -it music_proxy_1 cat /etc/hosts 
+
+# run quick test of Spring Music application
 for i in {1..10}
 do
   curl -I --url $(docker-machine ip springmusic)
