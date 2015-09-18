@@ -16,9 +16,6 @@ proxy:
   links:
    - app01
    - app02
-  volumes_from:
-   - app01
-   - app02
   hostname: "proxy"
 
 app01:
