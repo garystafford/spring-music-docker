@@ -202,7 +202,7 @@ docker-compose -f docker-compose.yml -p music up -d
 # wait for container apps to fully start
 sleep 15
 
-# test weaveDNS (should list entries for all containers)
+# test weave (should list entries for all containers)
 docker exec -it music_proxy_1 cat /etc/hosts 
 
 # run quick test of Spring Music application
