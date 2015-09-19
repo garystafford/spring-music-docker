@@ -1,13 +1,20 @@
-## Build and Deploy a Java-Spring-MongoDB Application using Docker
-
 _Build a multi-container, MongoDB-backed, Java Spring web application, and deploy to a test environment using Docker._
 
-[![Spring Music Application Environment](https://programmaticponderings.files.wordpress.com/2015/09/spring-music-machine.png)](https://programmaticponderings.files.wordpress.com/2015/09/spring-music-machine.png "Spring Music Application Environment")
+<a href="https://programmaticponderings.files.wordpress.com/2015/09/spring-music-diagram.png"><img src="https://programmaticponderings.files.wordpress.com/2015/09/spring-music-diagram.png" alt="Spring Music Diagram" width="567" height="254" class="aligncenter size-full wp-image-6110" style="border:0 solid #ffffff;" /></a>
+
+[Introduction](#introduction)  
+[Application Architecture](#application-architecture)  
+[Spring Music Environment](#spring-music-environment)  
+[Building the Environment](#building-the-environment)  
+[Spring Music Application Links](#building-the-environment)  
+[Helpful Links](#spring-music-application-links)
 
 ### Introduction
 In this post, we will demonstrate how to build, deploy, and host a multi-tier Java application using Docker. For the demonstration, we will use a sample Java Spring application, available on GitHub from Cloud Foundry. Cloud Foundry's [Spring Music](https://github.com/cloudfoundry-samples/spring-music) sample record album collection application was originally designed to demonstrate the use of database services on [Cloud Foundry](http://www.cloudfoundry.com) and [Spring Framework](http://www.springframework.org). Instead of Cloud Foundry, we will host the Spring Music application using Docker with VirtualBox and optionally, AWS.
 
-[![Spring Music Application](https://programmaticponderings.files.wordpress.com/2015/09/spring-music.png)](https://programmaticponderings.files.wordpress.com/2015/09/spring-music.png "Spring Music Application")
+All files for this post can be found in the `master` branch of the [GitHub](https://github.com/garystafford/spring-music-docker/tree/master) Repository. Instructions are below.
+
+<a href="https://programmaticponderings.files.wordpress.com/2015/09/spring-music.png"><img src="https://programmaticponderings.files.wordpress.com/2015/09/spring-music.png?w=620" alt="Spring Music" width="620" height="364" class="aligncenter size-large wp-image-6011" style="border:0 solid #ffffff;" /></a>
 
 A few changes were necessary to the original Spring Music application to make it work for the this demonstration. At a high-level, the changes included:
 
@@ -20,9 +27,8 @@ A few changes were necessary to the original Spring Music application to make it
 * Update versions of several dependencies, including Gradle to 2.6
 
 ### Application Architecture
-[![Kibana](https://programmaticponderings.files.wordpress.com/2015/09/kibana-spring-music.png)](https://programmaticponderings.files.wordpress.com/2015/09/kibana-spring-music.png "Kibana")
+The Java Spring Music application stack contains the following technologies:
 
-**Application Technology Stack**  
 * [Java](http://openjdk.java.net)
 * [Spring Framework](http://projects.spring.io/spring-framework)
 * [NGINX](http://nginx.org)
@@ -33,7 +39,7 @@ A few changes were necessary to the original Spring Music application to make it
 * [Logspout-Logstash Adapter](https://github.com/looplab/logspout-logstash)
 
 The Spring Music web application's static content will be hosted by [NGINX](http://nginx.org) for increased performance. The application's WAR file will be hosted by [Apache Tomcat](http://tomcat.apache.org). Requests for non-static content will be proxied through a single instance of NGINX on the front-end, to one of two load-balanced Tomcat instances on the back-end. NGINX will also be configured to allow for browser caching of the static content, to further increase application performance. Reverse proxying and caching are configured thought NGINX's `default.conf` file's `server` configuration section:
-```bash
+```text
 server {
   listen        80;
   server_name   localhost;
@@ -48,7 +54,7 @@ server {
   }
 ```
 
-The two Tomcat instances will be configured on NGINX, in a load-balancing pool, using the default round-robin load-balancing algorithm. This is configured thought NGINX's `default.conf` file's `upstream` configuration section:
+The two Tomcat instances will be configured on NGINX, in a load-balancing pool, using NGINX's default round-robin load-balancing algorithm. This is configured through NGINX's `default.conf` file's `upstream` configuration section:
 ```bash
 upstream backend {
   server app01:8080;
@@ -56,14 +62,17 @@ upstream backend {
 }
 ```
 
-The Spring Music application can be run with MySQL, Postgres, Oracle, MongoDB, Redis, or H2, an in-memory Java SQL database. Given the choice of both SQL and NoSQL databases available for use with the Spring Music application, we will select MongoDB. The Spring Music application, hosted by Tomcat, will store and modify record album data in a single instance of MongoDB. MongoDB will be populated with a collection of album data when the Spring Music application first creates the MongoDB database instance.
+The Spring Music application can be run with MySQL, Postgres, Oracle, MongoDB, Redis, or H2, an in-memory Java SQL database. Given the choice of both SQL and NoSQL databases available for use with the Spring Music application, we will select MongoDB.
+
+The Spring Music application, hosted by Tomcat, will store and modify record album data in a single instance of MongoDB. MongoDB will be populated with a collection of album data when the Spring Music application first creates the MongoDB database instance.
 
 Lastly, the ELK Stack with Logspout, will aggregate both Docker and Java Log4j log entries, providing debugging and analytics to our demonstration. I've used the same method for Docker and Java Log4j log entries, as detailed in this previous [post](https://programmaticponderings.wordpress.com/2015/08/02/log-aggregation-visualization-and-analysis-of-microservices-using-elk-stack-and-logspout/).
 
-### Spring Music Environment
-[![Spring Music Application Environment](https://programmaticponderings.files.wordpress.com/2015/09/spring-music-machine.png)](https://programmaticponderings.files.wordpress.com/2015/09/spring-music-machine.png "Spring Music Application Environment")
+<a href="https://programmaticponderings.files.wordpress.com/2015/09/kibana-spring-music.png"><img src="https://programmaticponderings.files.wordpress.com/2015/09/kibana-spring-music.png?w=620" alt="Kibana Spring Music" width="620" height="364" class="aligncenter size-large wp-image-6010" style="border:0 solid #ffffff;" /></a>
 
-**Build, Deploy, Host Technology Stack**  
+### Spring Music Environment
+To build, deploy, and host the Java Spring Music application, we will use the following technologies:
+
 * [Gradle](https://gradle.org)
 * [GitHub](https://github.com)
 * [Travis CI](https://travis-ci.org)
@@ -77,7 +86,7 @@ Lastly, the ELK Stack with Logspout, will aggregate both Docker and Java Log4j l
 
 All files necessary to build this project are stored in the [garystafford/spring-music-docker](https://github.com/garystafford/spring-music-docker) repository on GitHub. The Spring Music source code and build artifacts are stored in a seperate [garystafford/spring-music](https://github.com/garystafford/spring-music) repository, also on GitHub.
 
-Build artifacts are automatically built by [Travis CI](https://travis-ci.org) when changes are checked into the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. Travis CI then overwrites the build artifacts back to a [build artifact](https://github.com/garystafford/spring-music/tree/build-artifacts) branch of that same project. The build artifact branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project. The `.travis.yaml` file, `gradle.build` file, and `deploy.sh` script handles these functions:
+Build artifacts are automatically built by [Travis CI](https://travis-ci.org) when changes are checked into the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. Travis CI then overwrites the build artifacts back to a [build artifact](https://github.com/garystafford/spring-music/tree/build-artifacts) branch of that same project. The build artifact branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project. The `.travis.yaml` file, `gradle.build` file, and `deploy.sh` script handles these functions.
 
 .travis.yaml file:
 ```yaml
@@ -105,12 +114,12 @@ task warNoStatic(type: War) {
   version = ''
   exclude '**/assets/**'
   manifest {
-    attributes \
-      'Manifest-Version': '1.0', \
-      'Created-By': currentJvm, \
-      'Gradle-Version': GradleVersion.current().getVersion(), \
-      'Implementation-Title': archivesBaseName + '.war', \
-      'Implementation-Version': artifact_version, \
+    attributes 
+      'Manifest-Version': '1.0', 
+      'Created-By': currentJvm, 
+      'Gradle-Version': GradleVersion.current().getVersion(), 
+      'Implementation-Title': archivesBaseName + '.war', 
+      'Implementation-Version': artifact_version, 
       'Implementation-Vendor': 'Gary A. Stafford'
   }
 }
@@ -174,8 +183,8 @@ mkdir nginx/build-artifacts
 mkdir tomcat/build-artifacts
 
 echo "Pulling latest build artficats"
-git clone https://github.com/garystafford/spring-music.git \
-  --branch build-artifacts \
+git clone https://github.com/garystafford/spring-music.git 
+  --branch build-artifacts 
   --single-branch build-artifacts
 
 echo "Moving build artifacts to each microservice directory"
@@ -281,18 +290,9 @@ done
 
 By simply changing the driver to AWS EC2 and providing your AWS credentials, the same environment can be built on AWS within a single EC2 instance. The 'springmusic' environment has been fully tested both locally with VirtualBox, as well as on AWS.
 
-**Results**  
-Resulting containers and images:
+**Results**
+Resulting Docker images and containers:
 ```text
-gstafford@gstafford-X555LA:$ docker ps -a
-CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS                                                  NAMES
-facb6eddfb96        music_proxy         "nginx -g 'daemon off"   46 seconds ago       Up 46 seconds       0.0.0.0:80->80/tcp, 443/tcp                            music_proxy_1
-abf9bb0821e8        music_app01         "catalina.sh run"        About a minute ago   Up About a minute   0.0.0.0:8180->8080/tcp                                 music_app01_1
-e4c43ed84bed        music_logspout      "/bin/logspout"          About a minute ago   Up About a minute   8000/tcp, 0.0.0.0:8083->80/tcp                         music_logspout_1
-eca9a3cec52f        music_app02         "catalina.sh run"        2 minutes ago        Up 2 minutes        0.0.0.0:8280->8080/tcp                                 music_app02_1
-b7a7fd54575f        mongo:latest        "/entrypoint.sh mongo"   2 minutes ago        Up 2 minutes        27017/tcp                                              music_nosqldb_1
-cbfe43800f3e        music_elk           "/usr/bin/supervisord"   2 minutes ago        Up 2 minutes        5000/0, 0.0.0.0:8081->80/tcp, 0.0.0.0:8082->9200/tcp   music_elk_1
-
 gstafford@gstafford-X555LA:$ docker images
 REPOSITORY            TAG                 IMAGE ID            CREATED              VIRTUAL SIZE
 music_proxy           latest              46af4c1ffee0        52 seconds ago       144.5 MB
@@ -305,6 +305,15 @@ willdurand/elk        latest              04cd7334eb5d        9 days ago        
 tomcat                latest              6fe1972e6b08        10 days ago          347.7 MB
 mongo                 latest              5c9464760d54        10 days ago          260.8 MB
 nginx                 latest              cd3cf76a61ee        10 days ago          132.9 MB
+
+gstafford@gstafford-X555LA:$ docker ps -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS                                                  NAMES
+facb6eddfb96        music_proxy         "nginx -g 'daemon off"   46 seconds ago       Up 46 seconds       0.0.0.0:80->80/tcp, 443/tcp                            music_proxy_1
+abf9bb0821e8        music_app01         "catalina.sh run"        About a minute ago   Up About a minute   0.0.0.0:8180->8080/tcp                                 music_app01_1
+e4c43ed84bed        music_logspout      "/bin/logspout"          About a minute ago   Up About a minute   8000/tcp, 0.0.0.0:8083->80/tcp                         music_logspout_1
+eca9a3cec52f        music_app02         "catalina.sh run"        2 minutes ago        Up 2 minutes        0.0.0.0:8280->8080/tcp                                 music_app02_1
+b7a7fd54575f        mongo:latest        "/entrypoint.sh mongo"   2 minutes ago        Up 2 minutes        27017/tcp                                              music_nosqldb_1
+cbfe43800f3e        music_elk           "/usr/bin/supervisord"   2 minutes ago        Up 2 minutes        5000/0, 0.0.0.0:8081->80/tcp, 0.0.0.0:8082->9200/tcp   music_elk_1
 ```
 
 Partial result of the curl test, calling NGINX. Note the two different upstream addresses for Tomcat. Also, note the sharp decrease in request times, due to caching.
@@ -319,8 +328,8 @@ Accept-Ranges: bytes
 ETag: W/"2090-1441648256000"
 Last-Modified: Mon, 07 Sep 2015 17:50:56 GMT
 Content-Language: en
-Request-Time: 0.521
-Upstream-Address: 172.17.0.121:8080
+Request-Time: 0.521 <--
+Upstream-Address: 172.17.0.121:8080 <--
 Upstream-Response-Time: 1441648570.774
 
 HTTP/1.1 200 OK
@@ -333,8 +342,8 @@ Accept-Ranges: bytes
 ETag: W/"2090-1441648256000"
 Last-Modified: Mon, 07 Sep 2015 17:50:56 GMT
 Content-Language: en
-Request-Time: 0.326
-Upstream-Address: 172.17.0.123:8080
+Request-Time: 0.326 <--
+Upstream-Address: 172.17.0.123:8080 <--
 Upstream-Response-Time: 1441648571.506
 
 HTTP/1.1 200 OK
@@ -347,7 +356,7 @@ Accept-Ranges: bytes
 ETag: W/"2090-1441648256000"
 Last-Modified: Mon, 07 Sep 2015 17:50:56 GMT
 Content-Language: en
-Request-Time: 0.006
+Request-Time: 0.006 <--
 Upstream-Address: 172.17.0.121:8080
 Upstream-Response-Time: 1441648572.050
 
@@ -361,7 +370,7 @@ Accept-Ranges: bytes
 ETag: W/"2090-1441648256000"
 Last-Modified: Mon, 07 Sep 2015 17:50:56 GMT
 Content-Language: en
-Request-Time: 0.006
+Request-Time: 0.006 <--
 Upstream-Address: 172.17.0.123:8080
 Upstream-Response-Time: 1441648572.266
 ```
@@ -388,13 +397,3 @@ _* The Tomcat user name is `admin` and the password is `t0mcat53rv3r`._
 [Common conversion patterns for log4j's PatternLayout](http://www.codejava.net/coding/common-conversion-patterns-for-log4js-patternlayout)
 * [Spring @PropertySource example](http://www.mkyong.com/spring/spring-propertysources-example)
 * [Java log4j logging](http://help.papertrailapp.com/kb/configuration/java-log4j-logging/)
-
-
-#### To Remove Image and Containers During Development and Testing
-```bash
-# remove previous proxy/app/db images and containers
-docker ps -a --no-trunc  | grep 'music' | awk '{print $1}'   | xargs -r --no-run-if-empty docker stop && \
-docker ps -a --no-trunc  | grep 'music' | awk '{print $1}'   | xargs -r --no-run-if-empty docker rm && \
-docker images --no-trunc | grep 'music' | grep -v 'logspout' | awk '{print $3}' | xargs -r --no-run-if-empty docker rmi -f && \
-docker images && echo && docker ps -a
-```
