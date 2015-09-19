@@ -11,8 +11,7 @@
 #
 ########################################################################
 
-# clone project
-# install weave v1.1.0
+# install latest weave
 curl -L git.io/weave -o /usr/local/bin/weave && 
 chmod a+x /usr/local/bin/weave && 
 weave version
@@ -32,14 +31,14 @@ docker-machine env springmusic &&
 eval "$(docker-machine env springmusic)"
 
 # launch weave and weaveproxy/weaveDNS containers
-weave launch
+weave launch &&
 tlsargs=$(docker-machine ssh springmusic \
   "cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '")
-weave launch-proxy $tlsargs
-eval "$(weave env)"
+weave launch-proxy $tlsargs &&
+eval "$(weave env)" &&
 
 # test/confirm weave status
-weave status 
+weave status &&
 docker logs weaveproxy
 
 # pull build artifacts, built by Travis CI, 

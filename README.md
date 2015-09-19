@@ -159,10 +159,23 @@ In an actual Production environment, we would use a template, along with a servi
 
 ### Installing and Running Weave
 
-After cloning this post's GitHub repository, I recommend first installing and configuring Weave. Next, build the container host VM using Docker Machine. Lastly, build the containers using Docker Compose. The script below will take care of all the necessary steps.
+After cloning this post's GitHub repository, I recommend first installing and configuring Weave. Next, build the container host VM using Docker Machine. Lastly, build the containers using Docker Compose. The `build_project.sh` script below will take care of all the necessary steps.
 
-```bash
-# install weave v1.1.0
+```shell
+#!/bin/sh
+
+########################################################################
+#
+# title:          Build Complete Project
+# author:         Gary A. Stafford (https://programmaticponderings.com)
+# url:            https://github.com/garystafford/sprint-music-docker  
+# description:    Clone and build complete Spring Music Docker project
+#
+# to run:         sh ./build_project.sh
+#
+########################################################################
+
+# install latest weave
 curl -L git.io/weave -o /usr/local/bin/weave && 
 chmod a+x /usr/local/bin/weave && 
 weave version
@@ -182,14 +195,14 @@ docker-machine env springmusic &&
 eval "$(docker-machine env springmusic)"
 
 # launch weave and weaveproxy/weaveDNS containers
-weave launch
+weave launch &&
 tlsargs=$(docker-machine ssh springmusic \
   "cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '")
-weave launch-proxy $tlsargs
-eval "$(weave env)"
+weave launch-proxy $tlsargs &&
+eval "$(weave env)" &&
 
 # test/confirm weave status
-weave status 
+weave status &&
 docker logs weaveproxy
 
 # pull build artifacts, built by Travis CI, 
