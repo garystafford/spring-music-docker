@@ -1,3 +1,5 @@
+## Using Weave to Network a Docker Multi-Container Java Application
+
 _Use the latest version of Weaveworks' Weave Net to network a multi-container, Dockerized Java Spring web application._ [![Introduction Weave Image](https://programmaticponderings.files.wordpress.com/2015/09/introduction-weave-image.png)](https://programmaticponderings.files.wordpress.com/2015/09/introduction-weave-image.png)
 
 ### Introduction
