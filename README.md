@@ -257,13 +257,14 @@ echo "VirtualBox $(vboxmanage --version)" &&
 curl --version && git --version
 ```
 
-All of the below commands may be executed with the following single command (`sh ./build_project.sh`). This is useful for working with Jenkins CI, ThoughtWorks go, or similar CI tools. However, I suggest building the project step-by-step, as shown below, to better understand the process.
+All of the below commands may be executed with the following single command (`sh ./build_project.sh`). This is useful for working with [Jenkins CI](https://jenkins-ci.org/), [ThoughtWorks go](http://www.thoughtworks.com/products/go-continuous-delivery), or similar CI tools. However, I suggest building the project step-by-step, as shown below, to better understand the process.
 ```bash
 git clone https://github.com/garystafford/spring-music-docker.git && 
 cd spring-music-docker
 
 # build VM
 docker-machine create --driver virtualbox springmusic --debug
+All of the below commands may be executed with the following single command (`sh ./build_project.sh`). This is useful for working with [Jenkins CI](https://jenkins-ci.org/), [ThoughtWorks go](http://www.thoughtworks.com/products/go-continuous-delivery), or similar CI tools. However, I suggest building the project step-by-step, as shown below, to better understand the process.
 
 # create diectory to store mongo data on host
 docker ssh springmusic mkdir /opt/mongodb
