@@ -8,7 +8,7 @@ ENV REFRESHED_AT 2015-09-02
 
 ENV staticfile {{ zip_file }}
 
-COPY build-artifacts/${staticfile} /tmp/${staticfile}
+COPY ./build-artifacts/${staticfile} /tmp/${staticfile}
 
 RUN apt-get update -y && \
   apt-get install unzip nano -y && \
