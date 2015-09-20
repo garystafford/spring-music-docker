@@ -36,7 +36,7 @@ If you worked with previous editions of Weave, you will appreciate that Weave ve
 
 ### Weave-based Network
 
-In this post, we will reuse the Java Spring Music application from the last [post](https://programmaticponderings.wordpress.com/2015/09/07/building-and-deploying-a-multi-container-java-spring-mongodb-application-using-docker). However, we will replace the project's static dependencies on Docker links with Weave. This post will demonstrate the most basic features of Weave, using a single cluster. In a future post, we will demonstrate how easily Weave also integrates with multiple clusters. All files for this post can be found in the `weave` branch of the [GitHub](https://github.com/garystafford/spring-music-docker/tree/weave) Repository. Instructions are below.
+In this post, we will reuse the Java Spring Music application from the last [post](https://programmaticponderings.wordpress.com/2015/09/07/building-and-deploying-a-multi-container-java-spring-mongodb-application-using-docker). However, we will replace the project's static dependencies on Docker links with Weave. This post will demonstrate the most basic features of Weave, using a single cluster. In a future post, we will demonstrate how easily Weave also integrates with multiple clusters. All files for this post can be found in the `swarm-weave` branch of the [GitHub](https://github.com/garystafford/spring-music-docker/tree/swarm-weave) Repository. Instructions to clone repository below.
 
 ### Configuration
 
