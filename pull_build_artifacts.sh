@@ -30,6 +30,6 @@ mv build-artifacts/*.war tomcat/build-artifacts/
 mv build-artifacts/*.zip nginx/build-artifacts/
 
 echo "Removing local clone of build artifacts repo"
-#rm -rf build-artifacts
+rm -rf build-artifacts
 
 echo "Pulling build artifacts complete"
