@@ -312,7 +312,7 @@ cbfe43800f3e        music_elk           "/usr/bin/supervisord"   2 minutes ago  
 ```
 
 Partial result of the curl test, calling NGINX. Note the two different upstream addresses for Tomcat. Also, note the sharp decrease in request times, due to caching.
-```text
+```
 HTTP/1.1 200 OK
 Server: nginx/1.9.4
 Date: Mon, 07 Sep 2015 17:56:11 GMT
@@ -323,8 +323,8 @@ Accept-Ranges: bytes
 ETag: W/"2090-1441648256000"
 Last-Modified: Mon, 07 Sep 2015 17:50:56 GMT
 Content-Language: en
-Request-Time: 0.521 <--
-Upstream-Address: 172.17.0.121:8080 <--
+Request-Time: 0.521
+Upstream-Address: 172.17.0.121:8080
 Upstream-Response-Time: 1441648570.774
 
 HTTP/1.1 200 OK
@@ -337,8 +337,8 @@ Accept-Ranges: bytes
 ETag: W/"2090-1441648256000"
 Last-Modified: Mon, 07 Sep 2015 17:50:56 GMT
 Content-Language: en
-Request-Time: 0.326 <--
-Upstream-Address: 172.17.0.123:8080 <--
+Request-Time: 0.326
+Upstream-Address: 172.17.0.123:8080
 Upstream-Response-Time: 1441648571.506
 
 HTTP/1.1 200 OK
@@ -351,7 +351,7 @@ Accept-Ranges: bytes
 ETag: W/"2090-1441648256000"
 Last-Modified: Mon, 07 Sep 2015 17:50:56 GMT
 Content-Language: en
-Request-Time: 0.006 <--
+Request-Time: 0.006
 Upstream-Address: 172.17.0.121:8080
 Upstream-Response-Time: 1441648572.050
 
@@ -365,7 +365,7 @@ Accept-Ranges: bytes
 ETag: W/"2090-1441648256000"
 Last-Modified: Mon, 07 Sep 2015 17:50:56 GMT
 Content-Language: en
-Request-Time: 0.006 <--
+Request-Time: 0.006
 Upstream-Address: 172.17.0.123:8080
 Upstream-Response-Time: 1441648572.266
 ```
