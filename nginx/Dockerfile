@@ -8,7 +8,7 @@ ENV REFRESHED_AT 2015-09-02
 
 ENV staticfile spring-music-static.zip
 
-COPY build-artifacts/${staticfile} /tmp/${staticfile}
+COPY ./build-artifacts/${staticfile} /tmp/${staticfile}
 
 RUN apt-get update -y && \
   apt-get install unzip nano -y && \
