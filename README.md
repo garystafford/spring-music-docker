@@ -259,20 +259,19 @@ cd spring-music-docker
 
 # build VM
 docker-machine create --driver virtualbox springmusic --debug
-All of the below commands may be executed with the following single command (`sh ./build_project.sh`). This is useful for working with [Jenkins CI](https://jenkins-ci.org/), [ThoughtWorks go](http://www.thoughtworks.com/products/go-continuous-delivery), or similar CI tools. However, I suggest building the project step-by-step, as shown below, to better understand the process.
 
 # create diectory to store mongo data on host
 docker ssh springmusic mkdir /opt/mongodb
 
 # set new environment
-docker-machine env springmusic && 
+docker-machine env springmusic && \
 eval "$(docker-machine env springmusic)"
-
-# pull build artifacts from other repo, built by Travis CI
-sh ./pull_build_artifacts.sh
 
 # build images and containers
 docker-compose -f docker-compose.yml -p music up -d
+
+# configure local DNS resolution for application URL
+#echo "$(docker-machine ip springmusic)   springmusic.com" | sudo tee --append /etc/hosts
 
 # wait for container apps to start
 sleep 15
