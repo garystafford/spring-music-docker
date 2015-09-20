@@ -256,7 +256,7 @@ gstafford@gstafford-X555LA:$ weave status
        Address: tcp://192.168.99.100:12375
 ```
 
-Running the `docker exec -it music_proxy_1 cat /etc/hosts` command, we should observe that WeaveDNS has automatically added entries for all containers to the `music_proxy_1` container's `/etc/hosts` file. WeaveDNS will also remove the addresses of any container that die. This offers a simple way to implement redundancy. 
+Running the `docker exec -it music_proxy_1 cat /etc/hosts` command, we should observe that WeaveDNS has automatically added entries for all containers to the `music_proxy_1` container's `/etc/hosts` file. WeaveDNS will also remove the addresses of any containers that die. This offers a simple way to implement redundancy. 
 
 ```text
 gstafford@gstafford-X555LA:$ docker exec -it music_proxy_1 cat /etc/hosts
