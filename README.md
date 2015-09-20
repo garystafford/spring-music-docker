@@ -281,7 +281,7 @@ ff02::2         ip6-allrouters
 
 Weave resolves the container's name to `eth0` IP address, created by Docker's [`docker0`](https://docs.docker.com/articles/networking/#summary) Ethernet bridge. Each container can now communicate with all other containers in the cluster. [![Weave eth0 Network](https://programmaticponderings.files.wordpress.com/2015/09/weave-eth0-network.png)](https://programmaticponderings.files.wordpress.com/2015/09/weave-eth0-network.png) **Results** Resulting virtual machine, images, and containers:
 
-```text
+```shell
 gstafford@gstafford-X555LA:$ docker-machine ls
 NAME            ACTIVE   DRIVER       STATE     URL                         SWARM
 springmusic     *        virtualbox   Running   tcp://192.168.99.100:2376   
