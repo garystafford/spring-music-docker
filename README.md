@@ -86,7 +86,7 @@ To build, deploy, and host the Java Spring Music application, we will use the fo
 
 All files necessary to build this project are stored in the [garystafford/spring-music-docker](https://github.com/garystafford/spring-music-docker) repository on GitHub. The Spring Music source code and build artifacts are stored in a seperate [garystafford/spring-music](https://github.com/garystafford/spring-music) repository, also on GitHub.
 
-Build artifacts are automatically built by [Travis CI](https://travis-ci.org) when changes are checked into the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. Travis CI then overwrites the build artifacts back to a [build artifact](https://github.com/garystafford/spring-music/tree/build-artifacts) branch of that same project. The build artifact branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project. The `.travis.yaml` file, `gradle.build` file, and `deploy.sh` script handles these functions.
+Build artifacts are automatically built by [Travis CI](https://travis-ci.org) when changes are checked into the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. Travis CI then overwrites the build artifacts back to a [build artifact](https://github.com/garystafford/spring-music/tree/build-artifacts) branch of that same project. The build artifact branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project. The `.travis.yaml` file`gradle.build` file, and `deploy.sh` script handles these functions.
 
 .travis.yaml file:
 ```yaml
@@ -166,38 +166,31 @@ git commit -m "Deploy Travis CI build #${TRAVIS_BUILD_NUMBER} artifacts to GitHu
 # Force push from the current repo's master branch to the remote
 # repo's build-artifacts branch. (All previous history on the gh-pages branch
 # will be lost, since we are overwriting it.) We redirect any output to
-# /dev/null to hide any sensitive credential data that might otherwise be exposed. Environment variables pre-configured on Travis CI.
+# /dev/null to hide any sensitive credential data that might otherwise be exposed.
+# Environment variables pre-configured on Travis CI.
 git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:build-artifacts > /dev/null 2>&1
 ```
+Base Docker images, such as NGINX, Tomcat, and MongoDB, used to build the project's images and subsequently the containers, are all pulled from Docker Hub.
 
-This project then pulls the latest build artifacts down, to build the project-specific versions of the NGINX and Tomcat Docker images used for this project. For this we use the `pull_build_artifacts.sh` script:
-```bash
-#!/bin/sh
+This NGINX and Tomcat Dockerfiles pull the latest build artifacts down to build the project-specific versions of the NGINX and Tomcat Docker images used for this project. For example, the NGINX `Dockerfile` looks like:
+```text
+# NGINX image with build artifact
 
-echo "Removing all existing build artifacts"
-rm -rf build-artifacts
-rm -rf nginx/build-artifacts/
-rm -rf tomcat/build-artifacts/
+FROM nginx:latest
 
-mkdir nginx/build-artifacts
-mkdir tomcat/build-artifacts
+MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
 
-echo "Pulling latest build artficats"
-git clone https://github.com/garystafford/spring-music.git 
-  --branch build-artifacts 
-  --single-branch build-artifacts
+ENV REFRESHED_AT 2015-09-20
+ENV GITHUB_REPO https://github.com/garystafford/spring-music/raw/build-artifacts
+ENV STATIC_FILE spring-music-static.zip
 
-echo "Moving build artifacts to each microservice directory"
-mv build-artifacts/*.war tomcat/build-artifacts/
-mv build-artifacts/*.zip nginx/build-artifacts/
+RUN apt-get update -y && \
+  apt-get install wget unzip nano -y && \
+  wget -O /tmp/${STATIC_FILE} ${GITHUB_REPO}/${STATIC_FILE} && \
+  unzip /tmp/${STATIC_FILE} -d /usr/share/nginx/assets/
 
-echo "Removing local clone of build artifacts repo"
-rm -rf build-artifacts
-
-echo "Pulling build artifacts complete"
+COPY default.conf /etc/nginx/conf.d/default.conf
 ```
-
-Docker Images, such as NGINX, Tomcat, and MongoDB, used to build the project's images, and subsequently the containers, are all pulled from Docker Hub.
 
 Docker Machine builds a single VirtualBox VM. After building the VM, Docker Compose then builds and deploys (1) NGINX container, (2) load-balanced Tomcat containers, (1) MongoDB container, (1) ELK container, and (1) Logspout container, onto the VM. Docker Machine's VirtualBox driver provides a basic solution that can be run locally for testing and development. The `docker-compose.yml` for the project is as follows:
 ```yaml

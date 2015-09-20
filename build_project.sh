@@ -26,9 +26,6 @@ docker ssh springmusic mkdir /opt/mongodb
 docker-machine env springmusic && \
 eval "$(docker-machine env springmusic)"
 
-# pull build artifacts from other repo, built by Travis CI
-sh ./pull_build_artifacts.sh
-
 # build images and containers
 docker-compose -f docker-compose.yml -p music up -d
 
