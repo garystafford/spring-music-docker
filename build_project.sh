@@ -12,7 +12,8 @@
 ########################################################################
 
 # clone project
-git clone https://github.com/garystafford/spring-music-docker.git && \
+git clone -b master \
+  --single-branch https://github.com/garystafford/spring-music-docker.git && 
 cd spring-music-docker
 
 # build VM
