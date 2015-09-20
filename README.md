@@ -288,7 +288,7 @@ By simply changing the driver to AWS EC2 and providing your AWS credentials, the
 
 **Results**
 Resulting Docker images and containers:
-```text
+```shell
 gstafford@gstafford-X555LA:$ docker images
 REPOSITORY            TAG                 IMAGE ID            CREATED              VIRTUAL SIZE
 music_proxy           latest              46af4c1ffee0        52 seconds ago       144.5 MB
