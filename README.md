@@ -181,7 +181,7 @@ chmod a+x /usr/local/bin/weave &&
 weave version
 
 # clone project
-git clone https://github.com/garystafford/spring-music-docker.git && 
+git clone -b weave https://github.com/garystafford/spring-music-docker.git && 
 cd spring-music-docker
 
 # build VM
