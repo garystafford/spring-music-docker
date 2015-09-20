@@ -181,7 +181,8 @@ chmod a+x /usr/local/bin/weave &&
 weave version
 
 # clone project
-git clone https://github.com/garystafford/spring-music-docker.git && 
+git clone -b swarm-weave \
+  --single-branch https://github.com/garystafford/spring-music-docker.git && 
 cd spring-music-docker
 
 # build VM
@@ -204,10 +205,6 @@ eval "$(weave env)" &&
 # test/confirm weave status
 weave status &&
 docker logs weaveproxy
-
-# pull build artifacts, built by Travis CI, 
-# from source code repository
-sh ./pull_build_artifacts.sh
 
 # build images and containers
 docker-compose -f docker-compose.yml -p music up -d
