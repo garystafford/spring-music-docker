@@ -5,7 +5,7 @@ FROM tomcat:latest
 MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
 
 ENV REFRESHED_AT 2015-09-20
-ENV GITHUB_REPO https://github.com/garystafford/spring-music/blob/build-artifacts
+ENV GITHUB_REPO https://github.com/garystafford/spring-music/raw/build-artifacts
 ENV APP_FILE spring-music.war
 
 RUN apt-get update -y && \
