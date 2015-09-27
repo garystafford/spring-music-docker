@@ -1,0 +1,87 @@
+tlsargs=$(docker-machine ssh swarm-master \
+  "cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '")
+
+
+  tlsargs=$(docker-machine ssh swarm-master \
+  "cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '")
+
+
+
+weave launch 192.168.99.101
+
+find_tls_args="cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '" && \
+export DOCKER_CLIENT_ARGS="$(docker-machine config swarm-master)" && \
+tlsargs=$(docker-machine ssh swarm-master "${find_tls_args}") && \
+weave launch-proxy $tlsargs && \
+eval "$(weave env)"
+unset DOCKER_CLIENT_ARGS
+
+weave connect $(docker-machine ip "swarm-master")
+
+
+find_tls_args="cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '" && \
+export DOCKER_CLIENT_ARGS="$(docker-machine config swarm-node-01)" && \
+tlsargs=$(docker-machine ssh swarm-master "${find_tls_args}") && \
+weave stop-proxy && \
+weave launch-proxy $tlsargs && \
+eval "$(weave env)" && \
+weave connect $(docker-machine ip "swarm-master") && \
+unset DOCKER_CLIENT_ARGS
+
+find_tls_args="cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '" && \
+export DOCKER_CLIENT_ARGS="$(docker-machine config swarm-node-02)" && \
+tlsargs=$(docker-machine ssh swarm-master "${find_tls_args}") && \
+weave stop-proxy && \
+weave launch-proxy $tlsargs && \
+eval "$(weave env)" && \
+weave connect $(docker-machine ip "swarm-master") && \
+unset DOCKER_CLIENT_ARGS
+
+find_tls_args="cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '" && \
+export DOCKER_CLIENT_ARGS="$(docker-machine config swarm-node-03)" && \
+tlsargs=$(docker-machine ssh swarm-master "${find_tls_args}") && \
+weave stop-proxy && \
+weave launch-proxy $tlsargs && \
+eval "$(weave env)" && \
+weave connect $(docker-machine ip "swarm-master") && \
+unset DOCKER_CLIENT_ARGS
+
+find_tls_args="cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '" && \
+export DOCKER_CLIENT_ARGS="$(docker-machine config swarm-node-04)" && \
+tlsargs=$(docker-machine ssh swarm-master "${find_tls_args}") && \
+weave stop-proxy && \
+weave launch-proxy $tlsargs && \
+eval "$(weave env)" && \
+weave connect $(docker-machine ip "swarm-master") && \
+unset DOCKER_CLIENT_ARGS
+
+weave connect 192.168.99.100
+
+
+find_tls_args="cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '" && \
+export DOCKER_CLIENT_ARGS="$(docker-machine config swarm-node-01)" && \
+tlsargs=$(docker-machine ssh swarm-master "${find_tls_args}") && \
+weave stop-proxy && \
+weave launch-proxy $tlsargs && \
+eval "$(weave env)" && \
+weave connect $(docker-machine ip "swarm-master") && \
+unset DOCKER_CLIENT_ARGS
+
+
+
+
+weave stop-proxy && \
+weave launch-proxy --tlsverify --tlscacert=/var/lib/boot2docker/ca.pem --tlscert=/var/lib/boot2docker/server.pem --tlskey=/var/lib/boot2docker/server-key.pem && \
+eval "$(weave env)" && \
+weave connect 192.168.99.100
+
+
+for i in {1..10}
+do
+  curl -I --url $(docker-machine ip swarm-node-01)
+done
+
+
+server 192.168.99.101:32770;
+server 192.168.99.101:32769;
+server 192.168.99.101:32768;

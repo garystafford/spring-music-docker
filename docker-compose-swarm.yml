@@ -10,17 +10,13 @@
 #
 ########################################################################
 
-
-### NOT FINISHED - DO NOT USE ###
-
-
 proxy:
   image: garystafford/spring-music-docker-nginx
   ports:
    - "80:80"
   hostname: "proxy"
   environment:
-   - "constraint:itype==proxy"
+   - "constraint:itype==frontend"
    - "TERM=xterm"
 
 app:
@@ -29,7 +25,7 @@ app:
    - "8080"
   hostname: "app"
   environment:
-   - "constraint:itype==app"
+   - "constraint:itype==backend"
 
 nosqldb:
   image: garystafford/spring-music-docker-mongo
@@ -37,24 +33,24 @@ nosqldb:
    - "27017"
   hostname: "nosqldb"
   environment:
-    - "constraint:itype==nosqldb"
+    - "constraint:itype==database"
 
-elk:
-  image: garystafford/spring-music-docker-elk
-  ports:
-   - "8081:80"
-   - "8082:9200"
-  expose:
-    - "5000/upd"
-  environment:
-   - "constraint:itype==logging"
+# elk:
+#   image: garystafford/spring-music-docker-elk
+#   ports:
+#    - "8081:80"
+#    - "8082:9200"
+#   expose:
+#     - "5000/upd"
+#   environment:
+#    - "constraint:itype==logging"
 
-logspout:
-  image: garystafford/spring-music-docker-logspout
-  volumes:
-   - "/var/run/docker.sock:/tmp/docker.sock"
-  ports:
-   - "8083:80"
-  environment:
-   - ROUTE_URIS=logstash://music_elk_1:5000
-   - "constraint:itype==logging"
+# logspout:
+#   image: garystafford/spring-music-docker-logspout
+#   volumes:
+#    - "/var/run/docker.sock:/tmp/docker.sock"
+#   ports:
+#    - "8083:80"
+#   environment:
+#    - ROUTE_URIS=logstash://music_elk_1:5000
+#    - "constraint:itype==logging"

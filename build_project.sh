@@ -2,10 +2,11 @@
 
 ########################################################################
 #
-# title:          Build Complete Project
+# title:          Build Complete Single Cluster Weave Swarm Node Project
 # author:         Gary A. Stafford (https://programmaticponderings.com)
 # url:            https://github.com/garystafford/sprint-music-docker  
 # description:    Clone and build complete Spring Music Docker project
+#                 for single cluster weave swarm node
 #
 # to run:         sh ./build_project.sh
 #
@@ -36,7 +37,7 @@ weave launch &&
 tlsargs=$(docker-machine ssh springmusic \
   "cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '")
 weave launch-proxy $tlsargs &&
-eval "$(weave env)" &&
+eval "$(weave env)"
 
 # test/confirm weave status
 weave status &&

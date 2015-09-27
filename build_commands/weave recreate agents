@@ -1,0 +1,120 @@
+#####################################################################
+Recreate Agents
+#####################################################################
+Replace Swarm Agent
+https://github.com/weaveworks/guides/blob/d6c3b28061d40774818734dee915fd829b93e6bf/weave-and-docker-platform/scripts/3-replace-swarm-agents.sh
+#####################################################################
+
+DOCKER_SWARM_CREATE=${DOCKER_SWARM_CREATE:-"curl -XPOST https://discovery-stage.hub.docker.com/v1/clusters"} && \
+swarm_dicovery_token="$(${DOCKER_SWARM_CREATE})" && \
+echo ${swarm_dicovery_token}
+
+#####################################################################
+DOCKER_CLIENT_ARGS="$(docker-machine config swarm-node-01)" && \
+weave_proxy_endpoint="$(docker-machine ip swarm-node-01):12375" && \
+docker ${DOCKER_CLIENT_ARGS} rm -f swarm-agent && \
+docker ${DOCKER_CLIENT_ARGS} run \
+  -d \
+  --restart=always \
+  --name=swarm-agent \
+  swarm join \
+  --addr "${weave_proxy_endpoint}" \
+  "token://${swarm_dicovery_token}"
+
+#####################################################################
+DOCKER_CLIENT_ARGS="$(docker-machine config swarm-node-02)" && \
+weave_proxy_endpoint="$(docker-machine ip swarm-node-02):12375" && \
+docker ${DOCKER_CLIENT_ARGS} rm -f swarm-agent && \
+docker ${DOCKER_CLIENT_ARGS} run \
+  -d \
+  --restart=always \
+  --name=swarm-agent \
+  swarm join \
+  --addr "${weave_proxy_endpoint}" \
+  "token://${swarm_dicovery_token}"
+
+#####################################################################
+DOCKER_CLIENT_ARGS="$(docker-machine config swarm-node-03)" && \
+weave_proxy_endpoint="$(docker-machine ip swarm-node-03):12375" && \
+docker ${DOCKER_CLIENT_ARGS} rm -f swarm-agent && \
+docker ${DOCKER_CLIENT_ARGS} run \
+  -d \
+  --restart=always \
+  --name=swarm-agent \
+  swarm join \
+  --addr "${weave_proxy_endpoint}" \
+  "token://${swarm_dicovery_token}"
+
+#####################################################################
+DOCKER_CLIENT_ARGS="$(docker-machine config swarm-node-04)" && \
+weave_proxy_endpoint="$(docker-machine ip swarm-node-04):12375" && \
+docker ${DOCKER_CLIENT_ARGS} rm -f swarm-agent && \
+docker ${DOCKER_CLIENT_ARGS} run \
+  -d \
+  --restart=always \
+  --name=swarm-agent \
+  swarm join \
+  --addr "${weave_proxy_endpoint}" \
+  "token://${swarm_dicovery_token}"
+
+#####################################################################
+DOCKER_CLIENT_ARGS="$(docker-machine config swarm-master)" && \
+weave_proxy_endpoint="$(docker-machine ip swarm-master):12375" && \
+docker ${DOCKER_CLIENT_ARGS} rm -f swarm-agent && \
+docker ${DOCKER_CLIENT_ARGS} run \
+  -d \
+  --restart=always \
+  --name=swarm-agent \
+  swarm join \
+  --addr "${weave_proxy_endpoint}" \
+  "token://${swarm_dicovery_token}"
+
+swarm_master_args_fmt="\
+  -d \
+  --restart=always \
+  --name={{.Name}} \
+  -p 3376:3376 \
+  {{range .HostConfig.Binds}}-v {{.}} {{end}} \
+  swarm{{range .Args}} {{.}}{{end}} \
+" && \
+echo ${swarm_master_args} && \
+swarm_master_args=$(docker ${DOCKER_CLIENT_ARGS} inspect \
+  --format="${swarm_master_args_fmt}" \
+  swarm-agent-master \
+  | sed "s|\(token://\)[[:alnum:]]*|\1${swarm_dicovery_token}|") && \
+echo ${swarm_master_args}
+
+docker ${DOCKER_CLIENT_ARGS} rm -f swarm-agent-master && \
+docker ${DOCKER_CLIENT_ARGS} run ${swarm_master_args}
+
+#####################################################################
+docker run --rm swarm list token://$swarm_dicovery_token
+docker info
+
+
+
+
+
+MISC
+#####################################################################
+--tlsverify --tlscacert="/home/gstafford/.docker/machine/machines/swarm-master/ca.pem" --tlscert="/home/gstafford/.docker/machine/machines/swarm-master/cert.pem" --tlskey="/home/gstafford/.docker/machine/machines/swarm-master/key.pem" -H=tcp://192.168.99.100:2376
+
+
+docker -H tcp://0.0.0.0:2376 -H unix:///var/run/docker.sock -d
+
+docker -H tcp://0.0.0.0:12375 -H unix:///var/run/docker.sock -d
+
+docker -H tcp://0.0.0.0:12375 info
+
+
+docker -H tcp://192.168.99.100:12375 info
+
+docker run --rm swarm join --discovery=token://24e57d9136a21ff8d3831ee391c8862f --addr=192.168.99.101:2376
+
+
+docker-machine start swarm-node-04 swarm-node-03 swarm-node-02 swarm-node-01 swarm-master
+docker-machine restart swarm-node-04 swarm-node-03 swarm-node-02 swarm-node-01 swarm-master
+
+
+export DOCKER_CLIENT_ARGS=$(docker-machine config swarm-master | sed 's|:2376|:12375|')
+

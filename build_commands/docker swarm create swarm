@@ -1,0 +1,108 @@
+#####################################################################
+Build Swarm Clusters
+#####################################################################
+docker pull swarm
+docker run --rm swarm -v # check version to confirm installation
+
+# Get token from Docker Hub-based discovery service (Weave method)
+scid=$(curl -s -XPOST https://discovery-stage.hub.docker.com/v1/clusters) && \
+echo ${scid}
+
+# create (4) node swarm cluster
+docker-machine \
+  --native-ssh \
+  create \
+  --driver virtualbox --virtualbox-disk-size 8000 \
+  --virtualbox-memory 512 \
+  --swarm --swarm-master --swarm-discovery \
+  token://$scid swarm-master --debug
+
+docker-machine \
+  --native-ssh \
+  create \
+  --driver virtualbox --virtualbox-disk-size 8000 \
+  --virtualbox-memory 512 \
+  --engine-label itype=frontend \
+  --swarm --swarm-discovery \
+  token://$scid swarm-node-01 --debug
+
+docker-machine \
+  --native-ssh \
+  create \
+  --driver virtualbox --virtualbox-disk-size 8000 \
+  --virtualbox-memory 512 \
+  --engine-label itype=backend  \
+  --swarm --swarm-discovery \
+  token://$scid swarm-node-02 --debug
+
+docker-machine \
+  --native-ssh \
+  create \
+  --driver virtualbox --virtualbox-disk-size 8000 \
+  --virtualbox-memory 512 \
+  --engine-label itype=database  \
+  --swarm --swarm-discovery \
+  token://$scid swarm-node-03 --debug
+
+docker-machine \
+  --native-ssh \
+  create \
+  --driver virtualbox --virtualbox-disk-size 8000 \
+  --virtualbox-memory 512 \
+  --engine-label itype=logging  \
+  --swarm --swarm-discovery \
+  token://$scid swarm-node-04 --debug
+
+# set environment
+docker-machine env --swarm swarm-master && \
+eval "$(docker-machine env --swarm swarm-master)"
+
+# should see full details of (4) node cluster
+docker run --rm swarm list token://$scid
+docker info
+
+
+#####################################################################
+Build Containers
+#####################################################################
+# build (1) NGINX and (3) Tomcat containers
+docker-compose -f docker-compose-swarm.yml -p music up -d
+docker-compose -f docker-compose-swarm.yml -p music scale app=3 up -d
+
+# manually configure NGINX load-balancing pool
+# TODO: need to add Consul/Consul Template to automate this step!!!
+# add (3) Tomcat servers to 'upstream backend' section of default.conf
+# for example:
+# upstream backend {
+#   ip_hash;
+#   server music_app_1:8080;
+#   server music_app_2:8080;
+#   server music_app_3:8080;
+# }
+
+# note dns:port of all app containers (Tomcat)
+docker ps -a
+
+docker exec -it twcnip_proxy_1 bash
+cd /tmp && sh build_nginx_conf_production.sh
+nano /etc/nginx/conf.d/default.conf
+nginx -s reload # just reload NGINX config
+# ctrl p, ctrl q to exit container
+
+# configure local DNS resolution for application URL
+echo "$(docker-machine ip swarm-node-01)  prod.companynews.com" | sudo tee --append /etc/hosts
+
+# test by cURLing the website
+curl -v prod.companynews.com # see page source
+curl -I -X GET --url prod.companynews.com # see header with routing
+
+
+
+docker-machine start swarm-node-04 swarm-node-03 swarm-node-02 swarm-node-01 swarm-master
+
+
+
+# shouldn't need ip:new port if weave dns is working
+#   server 192.168.99.102:32768;
+#   server 192.168.99.103:32769;
+#   server 192.168.99.102:32770;

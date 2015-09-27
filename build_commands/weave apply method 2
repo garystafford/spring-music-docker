@@ -1,0 +1,74 @@
+#####################################################################
+Install Weave
+#####################################################################
+#UNUSED
+#echo $(docker-machine ssh swarm-master \
+#  "cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '")
+
+#--tlsverify --tlscacert=/var/lib/boot2docker/ca.pem --tlscert=/var/lib/boot2docker/server.pem --tlskey=/var/lib/boot2docker/server-key.pem
+
+#copy to clipboard
+
+#####################################################################
+docker-machine ssh swarm-master
+
+sudo curl -L git.io/weave -o /usr/local/bin/weave && \
+sudo chmod a+x /usr/local/bin/weave && \
+weave launch && \
+eval "$(weave env)" && \
+sleep 3 && \
+weave status
+
+exit
+
+#####################################################################
+docker-machine ssh swarm-node-01
+
+sudo curl -L git.io/weave -o /usr/local/bin/weave && \
+sudo chmod a+x /usr/local/bin/weave && \
+weave launch --init-peer-count 5 && \
+eval "$(weave env)" && \
+weave connect 192.168.99.100 && \
+sleep 3 && \
+weave status
+
+exit
+
+#####################################################################
+docker-machine ssh swarm-node-02
+
+sudo curl -L git.io/weave -o /usr/local/bin/weave && \
+sudo chmod a+x /usr/local/bin/weave && \
+weave launch --init-peer-count 5 && \
+eval "$(weave env)" && \
+weave connect 192.168.99.100 && \
+sleep 3 && \
+weave status
+
+exit
+
+#####################################################################
+docker-machine ssh swarm-node-03
+
+sudo curl -L git.io/weave -o /usr/local/bin/weave && \
+sudo chmod a+x /usr/local/bin/weave && \
+weave launch --init-peer-count 5 && \
+eval "$(weave env)" && \
+weave connect 192.168.99.100 && \
+sleep 3 && \
+weave status
+
+exit
+
+#####################################################################
+docker-machine ssh swarm-node-04
+
+sudo curl -L git.io/weave -o /usr/local/bin/weave && \
+sudo chmod a+x /usr/local/bin/weave && \
+weave launch --init-peer-count 5 && \
+eval "$(weave env)" && \
+weave connect 192.168.99.100 && \
+sleep 3 && \
+weave status
+
+exit

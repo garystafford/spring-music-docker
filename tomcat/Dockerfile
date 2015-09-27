@@ -10,7 +10,7 @@ ENV APP_FILE spring-music.war
 
 RUN apt-get update -y && \
   apt-get install wget -y && \
-  wget -O /usr/local/tomcat/webapps/ROOT.war ${GITHUB_REPO}/${APP_FILE} && \
-  mv /usr/local/tomcat/webapps/ROOT /usr/local/tomcat/webapps/_ROOT
+  mv /usr/local/tomcat/webapps/ROOT /usr/local/tomcat/webapps/_ROOT && \
+  wget -O /usr/local/tomcat/webapps/ROOT.war ${GITHUB_REPO}/${APP_FILE}
 
 COPY tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
