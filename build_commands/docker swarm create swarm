@@ -8,54 +8,45 @@ docker run --rm swarm -v # check version to confirm installation
 scid=$(curl -s -XPOST https://discovery-stage.hub.docker.com/v1/clusters) && \
 echo ${scid}
 
-# create (4) node swarm cluster
+# create (5) node swarm cluster
 docker-machine \
-  --native-ssh \
   create \
   --driver virtualbox --virtualbox-disk-size 8000 \
-  --virtualbox-memory 512 \
   --swarm --swarm-master --swarm-discovery \
   token://$scid swarm-master --debug
 
+# set environment
+docker-machine env --swarm swarm-master && \
+eval "$(docker-machine env --swarm swarm-master)"
+
 docker-machine \
-  --native-ssh \
   create \
   --driver virtualbox --virtualbox-disk-size 8000 \
-  --virtualbox-memory 512 \
   --engine-label itype=frontend \
   --swarm --swarm-discovery \
   token://$scid swarm-node-01 --debug
 
 docker-machine \
-  --native-ssh \
   create \
   --driver virtualbox --virtualbox-disk-size 8000 \
-  --virtualbox-memory 512 \
   --engine-label itype=backend  \
   --swarm --swarm-discovery \
   token://$scid swarm-node-02 --debug
 
 docker-machine \
-  --native-ssh \
   create \
   --driver virtualbox --virtualbox-disk-size 8000 \
-  --virtualbox-memory 512 \
   --engine-label itype=database  \
   --swarm --swarm-discovery \
   token://$scid swarm-node-03 --debug
 
 docker-machine \
-  --native-ssh \
   create \
   --driver virtualbox --virtualbox-disk-size 8000 \
-  --virtualbox-memory 512 \
   --engine-label itype=logging  \
   --swarm --swarm-discovery \
   token://$scid swarm-node-04 --debug
 
-# set environment
-docker-machine env --swarm swarm-master && \
-eval "$(docker-machine env --swarm swarm-master)"
 
 # should see full details of (4) node cluster
 docker run --rm swarm list token://$scid

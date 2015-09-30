@@ -1,0 +1,31 @@
+sudo curl -L git.io/weave -o /usr/local/bin/weave && \
+sudo chmod a+x /usr/local/bin/weave
+
+tlsargs=$(docker-machine ssh swarm-master \
+  "cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '")
+
+
+eval "$(docker-machine env swarm-master)" && \
+weave launch --init-peer-count 5 && \
+weave launch-proxy $tlsargs
+
+
+eval "$(docker-machine env swarm-node-01)" && \
+weave launch --init-peer-count 5 && \
+weave launch-proxy $tlsargs && \
+weave connect $(docker-machine ip swarm-master)
+
+eval "$(docker-machine env swarm-node-02)" && \
+weave launch --init-peer-count 5 && \
+weave launch-proxy $tlsargs && \
+weave connect $(docker-machine ip swarm-master)
+
+eval "$(docker-machine env swarm-node-03)" && \
+weave launch --init-peer-count 5 && \
+weave launch-proxy $tlsargs && \
+weave connect $(docker-machine ip swarm-master)
+
+eval "$(docker-machine env swarm-node-04)" && \
+weave launch --init-peer-count 5 && \
+weave launch-proxy $tlsargs && \
+weave connect $(docker-machine ip swarm-master)
