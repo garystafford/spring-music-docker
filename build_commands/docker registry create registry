@@ -1,0 +1,28 @@
+systemctl status docker
+service docker restart
+docker -D -d
+command -v docker
+docker version
+systemctl list-sockets | grep docker
+systemctl list-units | grep docker
+
+docker run -d -p 5000:5000 --restart=always --name registry \
+  -v `pwd`/data:/var/lib/registry \
+  registry:2
+
+  
+docker pull garystafford/spring-music-docker-nginx && \
+docker pull garystafford/spring-music-docker-tomcat && \
+docker pull garystafford/spring-music-docker-mongo
+
+docker tag garystafford/spring-music-docker-nginx localhost:5000/spring-music-docker-nginx && \
+docker tag garystafford/spring-music-docker-tomcat localhost:5000/spring-music-docker-tomcat && \
+docker tag garystafford/spring-music-docker-mongo localhost:5000/spring-music-docker-mongo
+
+docker push localhost:5000/spring-music-docker-nginx && \
+docker push localhost:5000/spring-music-docker-tomcat && \
+docker push localhost:5000/spring-music-docker-mongo
+
+docker pull localhost:5000/spring-music-docker-mongo
+
+http://localhost:5000/v1/_ping

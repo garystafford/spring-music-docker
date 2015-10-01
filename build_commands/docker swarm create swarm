@@ -52,6 +52,9 @@ docker-machine \
 docker run --rm swarm list token://$scid
 docker info
 
+# create diectory to store mongo data on host
+docker-machine ssh swarm-node-03 mkdir /opt/mongodb
+
 
 #####################################################################
 Build Containers

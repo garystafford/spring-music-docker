@@ -32,6 +32,8 @@ nosqldb:
   ports:
    - "27017"
   hostname: "nosqldb"
+  volumes:
+   - "/opt/mongodb:/data/db"
   environment:
     - "constraint:itype==database"
 
