@@ -96,29 +96,3 @@ docker run --rm swarm list token://$swarm_dicovery_token
 docker info
 
 
-
-
-
-MISC
-#####################################################################
---tlsverify --tlscacert="/home/gstafford/.docker/machine/machines/swarm-master/ca.pem" --tlscert="/home/gstafford/.docker/machine/machines/swarm-master/cert.pem" --tlskey="/home/gstafford/.docker/machine/machines/swarm-master/key.pem" -H=tcp://192.168.99.100:2376
-
-
-docker -H tcp://0.0.0.0:2376 -H unix:///var/run/docker.sock -d
-
-docker -H tcp://0.0.0.0:12375 -H unix:///var/run/docker.sock -d
-
-docker -H tcp://0.0.0.0:12375 info
-
-
-docker -H tcp://192.168.99.100:12375 info
-
-docker run --rm swarm join --discovery=token://24e57d9136a21ff8d3831ee391c8862f --addr=192.168.99.101:2376
-
-
-docker-machine start swarm-node-04 swarm-node-03 swarm-node-02 swarm-node-01 swarm-master
-docker-machine restart swarm-node-04 swarm-node-03 swarm-node-02 swarm-node-01 swarm-master
-
-
-export DOCKER_CLIENT_ARGS=$(docker-machine config swarm-master | sed 's|:2376|:12375|')
-
