@@ -5,6 +5,10 @@ Replace Swarm Agent
 https://github.com/weaveworks/guides/blob/d6c3b28061d40774818734dee915fd829b93e6bf/weave-and-docker-platform/scripts/3-replace-swarm-agents.sh
 #####################################################################
 
+# set environment
+docker-machine env --swarm swarm-master && \
+eval "$(docker-machine env --swarm swarm-master)"
+
 DOCKER_SWARM_CREATE=${DOCKER_SWARM_CREATE:-"curl -XPOST https://discovery-stage.hub.docker.com/v1/clusters"} && \
 swarm_dicovery_token="$(${DOCKER_SWARM_CREATE})" && \
 echo ${swarm_dicovery_token}

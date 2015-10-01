@@ -6,26 +6,34 @@ tlsargs=$(docker-machine ssh swarm-master \
 
 
 eval "$(docker-machine env swarm-master)" && \
-weave launch --init-peer-count 5 && \
+weave launch --init-peer-count
+
+# does't create proxy if all in one command?
 weave launch-proxy $tlsargs
 
 
 eval "$(docker-machine env swarm-node-01)" && \
-weave launch --init-peer-count 5 && \
+weave launch --init-peer-count 5
+
 weave launch-proxy $tlsargs && \
 weave connect $(docker-machine ip swarm-master)
 
 eval "$(docker-machine env swarm-node-02)" && \
-weave launch --init-peer-count 5 && \
+weave launch --init-peer-count 5
+
 weave launch-proxy $tlsargs && \
 weave connect $(docker-machine ip swarm-master)
 
 eval "$(docker-machine env swarm-node-03)" && \
-weave launch --init-peer-count 5 && \
+weave launch --init-peer-count 5
+
 weave launch-proxy $tlsargs && \
 weave connect $(docker-machine ip swarm-master)
 
 eval "$(docker-machine env swarm-node-04)" && \
-weave launch --init-peer-count 5 && \
+weave launch --init-peer-count 5
+
 weave launch-proxy $tlsargs && \
 weave connect $(docker-machine ip swarm-master)
+
+weave status

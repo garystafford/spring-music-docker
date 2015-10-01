@@ -59,6 +59,11 @@ docker-machine ssh swarm-node-03 mkdir /opt/mongodb
 #####################################################################
 Build Containers
 #####################################################################
+#optional pre-pull images
+docker pull garystafford/spring-music-docker-mongo
+docker pull garystafford/spring-music-docker-nginx
+docker pull garystafford/spring-music-docker-tomcat
+
 # build (1) NGINX and (3) Tomcat containers
 docker-compose -f docker-compose-swarm.yml -p music up -d
 docker-compose -f docker-compose-swarm.yml -p music scale app=3 up -d

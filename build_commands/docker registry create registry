@@ -1,6 +1,5 @@
 systemctl status docker
 systemctl start docker
-service docker restart
 docker -D -d
 command -v docker
 docker version
