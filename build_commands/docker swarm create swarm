@@ -1,8 +1,9 @@
 #####################################################################
 Build Swarm Clusters
 #####################################################################
-docker pull swarm
-docker run --rm swarm -v # check version to confirm installation
+# pull swarm and check version to confirm install
+docker pull swarm && \
+docker run --rm swarm -v 
 
 # Get token from Docker Hub-based discovery service (Weave method)
 scid=$(curl -s -XPOST https://discovery-stage.hub.docker.com/v1/clusters) && \
@@ -11,7 +12,7 @@ echo ${scid}
 # create (5) node swarm cluster
 docker-machine \
   create \
-  --driver virtualbox --virtualbox-disk-size 8000 \
+  --driver virtualbox \
   --swarm --swarm-master --swarm-discovery \
   token://$scid swarm-master --debug
 
@@ -21,32 +22,31 @@ eval "$(docker-machine env --swarm swarm-master)"
 
 docker-machine \
   create \
-  --driver virtualbox --virtualbox-disk-size 8000 \
+  --driver virtualbox \
   --engine-label itype=frontend \
   --swarm --swarm-discovery \
   token://$scid swarm-node-01 --debug
 
 docker-machine \
   create \
-  --driver virtualbox --virtualbox-disk-size 8000 \
+  --driver virtualbox \
   --engine-label itype=backend  \
   --swarm --swarm-discovery \
   token://$scid swarm-node-02 --debug
 
 docker-machine \
   create \
-  --driver virtualbox --virtualbox-disk-size 8000 \
+  --driver virtualbox \
   --engine-label itype=database  \
   --swarm --swarm-discovery \
   token://$scid swarm-node-03 --debug
 
 docker-machine \
   create \
-  --driver virtualbox --virtualbox-disk-size 8000 \
+  --driver virtualbox \
   --engine-label itype=logging  \
   --swarm --swarm-discovery \
   token://$scid swarm-node-04 --debug
-
 
 # should see full details of (4) node cluster
 docker run --rm swarm list token://$scid
