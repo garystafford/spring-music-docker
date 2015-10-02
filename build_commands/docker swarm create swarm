@@ -60,10 +60,17 @@ docker info
 # create diectory to store mongo data on host
 docker-machine ssh swarm-node-03 mkdir /opt/mongodb
 
+#####################################################################
+Add weave - see other scripts/instructions
+#####################################################################
 
 #####################################################################
 Build Containers
 #####################################################################
+# set environment
+docker-machine env --swarm swarm-master && \
+eval "$(docker-machine env --swarm swarm-master)"
+
 #optional pre-pull images
 docker pull garystafford/spring-music-docker-mongo
 docker pull garystafford/spring-music-docker-nginx
