@@ -14,4 +14,4 @@ RUN apt-get update -y && \
   unzip /tmp/${STATIC_FILE} -d /usr/share/nginx/assets/
 
 #COPY default.conf /etc/nginx/conf.d/default.conf
-COPY default* /tmp
+COPY default* /tmp/
