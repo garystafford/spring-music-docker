@@ -13,4 +13,5 @@ RUN apt-get update -y && \
   wget -O /tmp/${STATIC_FILE} ${GITHUB_REPO}/${STATIC_FILE} && \
   unzip /tmp/${STATIC_FILE} -d /usr/share/nginx/assets/
 
-COPY default.conf /etc/nginx/conf.d/default.conf
+#COPY default.conf /etc/nginx/conf.d/default.conf
+COPY default* /tmp
