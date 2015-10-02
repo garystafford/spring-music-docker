@@ -6,7 +6,7 @@ tlsargs=$(docker-machine ssh swarm-master \
 
 
 eval "$(docker-machine env swarm-master)" && \
-weave launch --init-peer-count
+weave launch
 
 # does't create proxy if all in one command?
 weave launch-proxy $tlsargs
