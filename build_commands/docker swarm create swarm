@@ -1,6 +1,11 @@
 #####################################################################
 Build Swarm Clusters
 #####################################################################
+# clone project
+git clone -b swarm-weave \
+  --single-branch https://github.com/garystafford/spring-music-docker.git && 
+cd spring-music-docker
+
 # pull swarm and check version to confirm install
 docker pull swarm && \
 docker run --rm swarm -v 
