@@ -4,7 +4,7 @@ FROM nginx:latest
 
 MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
 
-ENV REFRESHED_AT 2015-09-20
+ENV REFRESHED_AT 2015-10-02
 ENV GITHUB_REPO https://github.com/garystafford/spring-music/raw/build-artifacts
 ENV STATIC_FILE spring-music-static.zip
 
