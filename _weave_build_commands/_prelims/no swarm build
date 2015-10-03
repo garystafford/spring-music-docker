@@ -1,75 +1,55 @@
 #####################################################################
-Build Swarm Clusters
+build vms
 #####################################################################
 # clone project
 git clone -b swarm-weave \
   --single-branch https://github.com/garystafford/spring-music-docker.git && 
 cd spring-music-docker
 
-# pull swarm and check version to confirm install
-docker pull swarm && \
-docker run --rm swarm -v 
+for i in {1..3}
+do
+  docker-machine \
+    create \
+    --driver virtualbox --virtualbox-disk-size 8000 \
+    --virtualbox-memory 512 \
+    weave-node-0${i} --debug
+done
 
-# Get token from Docker Hub-based discovery service (Weave method)
-scid=$(curl -s -XPOST https://discovery-stage.hub.docker.com/v1/clusters) && \
-echo ${scid}
-
-# create (5) node swarm cluster
-docker-machine \
-  create \
-  --driver virtualbox \
-  --swarm --swarm-master --swarm-discovery \
-  token://$scid swarm-master --debug
-
-# set environment
-docker-machine env --swarm swarm-master && \
-eval "$(docker-machine env --swarm swarm-master)"
-
-docker-machine \
-  create \
-  --driver virtualbox \
-  --engine-label itype=frontend \
-  --swarm --swarm-discovery \
-  token://$scid swarm-node-01 --debug
-
-docker-machine \
-  create \
-  --driver virtualbox \
-  --engine-label itype=backend  \
-  --swarm --swarm-discovery \
-  token://$scid swarm-node-02 --debug
-
-docker-machine \
-  create \
-  --driver virtualbox \
-  --engine-label itype=database  \
-  --swarm --swarm-discovery \
-  token://$scid swarm-node-03 --debug
-
-docker-machine \
-  create \
-  --driver virtualbox \
-  --engine-label itype=logging  \
-  --swarm --swarm-discovery \
-  token://$scid swarm-node-04 --debug
-
-# should see full details of (4) node cluster
-docker run --rm swarm list token://$scid
 docker info
 
 # create diectory to store mongo data on host
 docker-machine ssh swarm-node-03 mkdir /opt/mongodb
 
 #####################################################################
-Add weave - see other scripts/instructions
+weave
 #####################################################################
+
+tlsargs=$(docker-machine ssh weave-node-01 \
+  "cat /proc/\$(pgrep /usr/local/bin/docker)/cmdline | tr '\0' '\n' | grep ^--tls | tr '\n' ' '")
+
+sudo curl -L git.io/weave -o /usr/local/bin/weave && \
+sudo chmod a+x /usr/local/bin/weave
+
+eval "$(docker-machine env weave-node-01)" && \
+weave launch && \
+weave launch-proxy $tlsargs
+
+for i in {2..3}
+do
+  eval "$(docker-machine env weave-node-0${i})" && \
+  weave launch --init-peer-count 3 && \
+  weave launch-proxy $tlsargs && \
+  weave connect $(docker-machine ip weave-node-01)
+done
+
+weave status
+
+# create diectory to store mongo data on host
+docker-machine ssh swarm-node-03 mkdir /opt/mongodb
 
 #####################################################################
 Build Containers
 #####################################################################
-# set environment
-docker-machine env --swarm swarm-master && \
-eval "$(docker-machine env --swarm swarm-master)"
 
 #optional pre-pull images
 docker pull garystafford/spring-music-docker-mongo
@@ -77,7 +57,7 @@ docker pull garystafford/spring-music-docker-nginx
 docker pull garystafford/spring-music-docker-tomcat
 
 # build (1) NGINX and (3) Tomcat containers
-docker-compose -f docker-compose-swarm.yml -p music up -d
+docker-compose -f docker-compose-mongo.yml -p music up -d
 docker-compose -f docker-compose-swarm.yml -p music scale app=3 up -d
 
 # manually configure NGINX load-balancing pool
