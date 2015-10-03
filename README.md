@@ -225,6 +225,7 @@ do
   curl -I --url $(docker-machine ip springmusic)
 done
 ```
+One last test, to ensure that MongoDB is using the host's volume, and not storing data in the MongoDB container's `/data/db` directory, execute the following command: `docker-machine ssh springmusic ls /opt/mongodb`. You should see MongoDB-related content being stored here.
 
 ### Testing Weave
 
