@@ -19,7 +19,7 @@ cd spring-music-docker
 # build VM
 docker-machine create --driver virtualbox springmusic --debug
 
-# create diectory to store mongo data on host
+# create directory to store mongo data on host
 docker-machine ssh springmusic mkdir /opt/mongodb
 
 # set new environment
