@@ -1,5 +1,6 @@
-iptables -t nat -L -n
+sudo iptables -t nat -L -n
 sudo iptables -L -v
+
 ip route
 ip addr
 
@@ -9,10 +10,12 @@ lsof -i :80
 weave ps
 weave config
 weave status
+weave status dns
+weave status peers
 
 brctl show
 brctl showstp docker0
 
-netstat -nat |grep -v CLOSE_WAIT
-netstat -tupln
-netstat -anp | grep LISTEN
+sudo netstat -nat |grep -v CLOSE_WAIT
+sudo netstat -tupln
+sudo netstat -anp | grep LISTEN

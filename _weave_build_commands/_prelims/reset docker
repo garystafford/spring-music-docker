@@ -1,0 +1,7 @@
+reset docker
+
+docker-machine env -u
+unset DOCKER_HOST
+unset DOCKER_MACHINE_NAME
+unset DOCKER_TLS_VERIFY
+DOCKER_CERT_PATH=/home/gstafford/.docker/machine/certs/
