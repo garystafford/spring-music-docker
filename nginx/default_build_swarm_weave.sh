@@ -7,7 +7,7 @@
 # url:            https://github.com/garystafford/spring-music-docker  
 # description:    Replaces tokens in template
 #
-# to run:         sh default_build_swarm.sh
+# to run:         sh default_build_swarm_weave.sh
 #
 ########################################################################
 
@@ -15,9 +15,9 @@
 # http://www.cyberciti.biz/faq/howto-sed-substitute-find-replace-multiple-patterns/
 
 # http://nginx.org/en/docs/http/load_balancing.html
-# ip_hash;
+# ip_hash; or round-robin by default
 lb_method_token="#{{ lb_method }}"
-lb_method="" # round-robin by default
+lb_method=""
 
 app_servers_token="#{{ app_servers }}"
 app_servers="server music_app_1:8080;\r\n  server music_app_2:8080;\r\n  server music_app_3:8080;"
