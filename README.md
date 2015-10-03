@@ -286,7 +286,8 @@ Weave resolves the container's name to `eth0` IP address, created by Docker's [`
 
 [![Weave eth0 Network](https://programmaticponderings.files.wordpress.com/2015/09/weave-eth0-network.png)](https://programmaticponderings.files.wordpress.com/2015/09/weave-eth0-network.png)
 
-**Results** Resulting virtual machine, images, and containers:
+### Results
+Resulting virtual machine, images, and containers:
 
 ```shell
 gstafford@gstafford-X555LA:$ docker-machine ls
