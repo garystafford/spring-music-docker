@@ -282,7 +282,11 @@ ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 ```
 
-Weave resolves the container's name to `eth0` IP address, created by Docker's [`docker0`](https://docs.docker.com/articles/networking/#summary) Ethernet bridge. Each container can now communicate with all other containers in the cluster. [![Weave eth0 Network](https://programmaticponderings.files.wordpress.com/2015/09/weave-eth0-network.png)](https://programmaticponderings.files.wordpress.com/2015/09/weave-eth0-network.png) **Results** Resulting virtual machine, images, and containers:
+Weave resolves the container's name to `eth0` IP address, created by Docker's [`docker0`](https://docs.docker.com/articles/networking/#summary) Ethernet bridge. Each container can now communicate with all other containers in the cluster.
+
+[![Weave eth0 Network](https://programmaticponderings.files.wordpress.com/2015/09/weave-eth0-network.png)](https://programmaticponderings.files.wordpress.com/2015/09/weave-eth0-network.png)
+
+**Results** Resulting virtual machine, images, and containers:
 
 ```shell
 gstafford@gstafford-X555LA:$ docker-machine ls
