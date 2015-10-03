@@ -20,7 +20,7 @@ lb_method_token="#{{ lb_method }}"
 lb_method="" # round-robin by default
 
 app_servers_token="#{{ app_servers }}"
-app_servers="server music_app_1:8080;\r\n  server music_app_2:8080;\r\n  server music_app_3:8080;"
+app_servers="server music_app01_1:8080;\r\n  server music_app02_1:8080;"
 
 echo "  ${lb_method_token} = ${lb_method}"
 echo "  ${app_servers_token} = ${app_servers}"
