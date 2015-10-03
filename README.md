@@ -191,7 +191,7 @@ cd spring-music-docker
 # build VM
 docker-machine create --driver virtualbox springmusic --debug
 
-# create diectory to store mongo data on host
+# create directory to store mongo data on host
 docker-machine ssh springmusic mkdir /opt/mongodb
 
 # set new environment
@@ -209,7 +209,8 @@ eval "$(weave env)" &&
 weave status &&
 docker logs weaveproxy
 
-# build images and containers
+# pull and build images and containers
+# this step will take several minutes to pull images first time
 docker-compose -f docker-compose.yml -p music up -d
 
 # wait for container apps to fully start
