@@ -7,7 +7,7 @@
 # url:            https://github.com/garystafford/spring-music-docker  
 # description:    Replaces tokens in template
 #
-# to run:         sh default_build_swarm.sh
+# to run:         sh ./default_build_swarm.sh
 #
 ########################################################################
 
