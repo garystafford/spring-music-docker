@@ -19,7 +19,8 @@ weave version
 
 # clone project
 git clone -b swarm-weave \
-  --single-branch https://github.com/garystafford/spring-music-docker.git && 
+  --single-branch --branch swarm-weave \
+  https://github.com/garystafford/spring-music-docker.git && 
 cd spring-music-docker
 
 # build VM
