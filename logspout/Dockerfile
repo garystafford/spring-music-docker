@@ -5,7 +5,8 @@
 # builds with modules.go in project root (not here)
 # test: nc elk 5000 < /dev/null; echo $? # return 0 if working
 
-FROM gliderlabs/logspout:master
+FROM gliderlabs/logspout:latest
+#FROM gliderlabs/logspout:master # currently broken
 
 MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
 

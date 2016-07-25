@@ -2,7 +2,7 @@
 #
 # title:       Docker Compose YAML file for spring-music
 # author:      Gary A. Stafford (https://programmaticponderings.com)
-# url:         https://github.com/garystafford/spring-music-docker.git  
+# url:         https://github.com/garystafford/spring-music-docker.git
 # description: Builds single VM, multi-container environment
 #              with debugging ports open and extra header information
 # to run:      docker-compose -f docker-compose.yml -p music up -d
@@ -12,7 +12,7 @@
 proxy:
   build: nginx/
   ports:
-   - "80:80"
+   - "8380:80"
   links:
    - app01
    - app02
@@ -44,7 +44,7 @@ nosqldb:
   build: mongo/
   hostname: "nosqldb"
   volumes:
-   - "/opt/mongodb:/data/db"
+   - "/data/db:/data/db"
 
 elk:
   build: elk/
@@ -57,7 +57,7 @@ elk:
 logspout:
   build: logspout/
   volumes:
-   - "/var/run/docker.sock:/tmp/docker.sock"
+   - "/var/run/docker.sock:/var/run/docker.sock"
   links:
    - elk
   ports:

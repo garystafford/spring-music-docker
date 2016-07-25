@@ -1,0 +1,91 @@
+########################################################################
+#
+# title:       Docker Compose v2 YAML file for spring-music
+# author:      Gary A. Stafford (https://programmaticponderings.com)
+# url:         https://github.com/garystafford/spring-music-docker.git
+# description: Builds single VM, multi-container environment
+#              with debugging ports open and extra header information
+# usage:       docker-compose -f docker-compose-v2.yml -p music up -d
+#
+########################################################################
+
+version: '2'
+services:
+
+  proxy:
+    build: nginx/
+    ports:
+     - "8380:80"
+    depends_on:
+     - app01
+     - app02
+    hostname: "proxy"
+    container_name: "proxy"
+    # networks:
+    #   - demo_overlay_net
+
+  app01:
+    build: tomcat/
+    ports:
+     - "8180:8080"
+    depends_on:
+     - nosqldb
+    hostname: "app01"
+    container_name: "app01"
+    # networks:
+    #   - demo_overlay_net
+
+  app02:
+    build: tomcat/
+    ports:
+     - "8280:8080"
+    depends_on:
+     - nosqldb
+    hostname: "app02"
+    container_name: "app02"
+    # networks:
+    #   - demo_overlay_net
+
+  nosqldb:
+    build: mongo/
+    depends_on:
+     - logspout
+    hostname: "nosqldb"
+    container_name: "nosqldb"
+    volumes:
+     - "data:/data/db"
+    # networks:
+    #   - demo_overlay_net
+
+  logspout:
+    build: logspout/
+    volumes:
+     - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+     - "8083:80"
+    depends_on:
+     - elk
+    hostname: "logspout"
+    container_name: "logspout"
+    environment:
+      - ROUTE_URIS=logstash://elk:5000
+    # networks:
+    #   - demo_overlay_net
+
+  elk:
+    build: elk/
+    ports:
+     - "8081:80"
+     - "8082:9200"
+    hostname: "elk"
+    container_name: "elk"
+    # networks:
+    #   - demo_overlay_net
+
+# networks:
+#   music_overlay_net:
+#     external: true
+
+volumes:
+  data: {}
+    # external: true
