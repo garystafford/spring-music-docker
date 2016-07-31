@@ -1,9 +1,8 @@
 # ELK Stack image with customization
 
-FROM willdurand/elk
+FROM sebp/elk:latest
 
 MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
+ENV REFRESHED_AT 2016-07-30
 
-ENV REFRESHED_AT 2015-09-02
-
-COPY logstash-logspout.conf /etc/logstash/logstash-logspout.conf
+# COPY logstash.conf /etc/logstash/logstash.conf
