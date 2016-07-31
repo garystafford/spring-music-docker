@@ -23,14 +23,11 @@ eval "$(docker-machine env springmusic)"
 # create directory to store mongo data on host
 docker volume create --name music_data
 
-# build images and containers (sleep built in for sequencing startup times)
-docker-compose -f docker-compose-v2.yml -p music up -d elk && sleep 5 && \
-docker-compose -f docker-compose-v2.yml -p music up -d mongodb && sleep 5 && \
-docker-compose -f docker-compose-v2.yml -p music up -d app01 app02 && sleep 10 && \
-docker-compose -f docker-compose-v2.yml -p music up -d proxy && sleep 5
+# build images and containers
+docker-compose -p music up -d
 
 # optional: configure local DNS resolution for application URL
 #echo "$(docker-machine ip springmusic)   springmusic.com" | sudo tee --append /etc/hosts
 
 # run quick connectivity test of application
-for i in {1..10}; do curl -I $(docker-machine ip springmusic);done
+for i in {1..10}; do curl -I $(docker-machine ip springmusic); done

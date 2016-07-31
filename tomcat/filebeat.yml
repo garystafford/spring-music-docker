@@ -23,3 +23,8 @@ filebeat:
         pattern: '^[[:space:]]+|^Caused by:'
         negate: false
         match: after
+    -
+      paths:
+        - /usr/local/tomcat/logs/*.out
+        - /usr/local/tomcat/logs/*.log
+      document_type: tomcat

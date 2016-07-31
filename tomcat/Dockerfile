@@ -12,7 +12,8 @@ RUN apt-get update -qq && \
   apt-get install -qqy curl wget && \
   apt-get clean
 
-RUN touch /var/log/spring-music.log
+RUN touch /var/log/spring-music.log && \
+chmod 666 /var/log/spring-music.log
 
 RUN wget -O /usr/local/tomcat/webapps/ROOT.war ${GITHUB_REPO}/${APP_FILE} && \
   mv /usr/local/tomcat/webapps/ROOT /usr/local/tomcat/webapps/_ROOT

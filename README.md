@@ -426,17 +426,3 @@ _* The Tomcat user name is `admin` and the password is `t0mcat53rv3r`._
 [Common conversion patterns for log4j's PatternLayout](http://www.codejava.net/coding/common-conversion-patterns-for-log4js-patternlayout)
 * [Spring @PropertySource example](http://www.mkyong.com/spring/spring-propertysources-example)
 * [Java log4j logging](http://help.papertrailapp.com/kb/configuration/java-log4j-logging/)
-
-
-### Other Useful Commands
-```bash
-docker rm -f proxy app01 app02 mongodb elk
-
-docker-machine restart springmusic
-
-docker restart elk && sleep 10 && \
-docker restart mongodb && sleep 10 && \
-docker restart app01 app02 && sleep 10 && \
-docker restart proxy
-```
-http://elk-docker.readthedocs.io/

@@ -1,66 +1,56 @@
-########################################################################
-#
-# title:       Docker Compose YAML file for spring-music
-# author:      Gary A. Stafford (https://programmaticponderings.com)
-# url:         https://github.com/garystafford/spring-music-docker.git
-# description: Builds single VM, multi-container environment
-#              with debugging ports open and extra header information
-# to run:      docker-compose -f docker-compose.yml -p music up -d
-#
-########################################################################
+version: '2'
 
-proxy:
-  build: nginx/
-  ports:
-   - "8380:80"
-  links:
-   - app01
-   - app02
-  hostname: "proxy"
+services:
+  proxy:
+    build: nginx/
+    ports:
+    - 80:80
+    depends_on:
+    - app01
+    - app02
+    hostname: proxy
+    container_name: proxy
 
-app01:
-  build: tomcat/
-  expose:
-   - "8080"
-  ports:
-   - "8180:8080"
-  links:
-   - nosqldb
-   - elk
-  hostname: "app01"
+  app01:
+    build: tomcat/
+    ports:
+    - 8180:8080
+    depends_on:
+    - mongodb
+    hostname: app01
+    container_name: app01
 
-app02:
-  build: tomcat/
-  expose:
-   - "8080"
-  ports:
-   - "8280:8080"
-  links:
-   - nosqldb
-   - elk
-  hostname: "app01"
+  app02:
+    build: tomcat/
+    ports:
+    - 8280:8080
+    depends_on:
+    - mongodb
+    hostname: app02
+    container_name: app02
 
-nosqldb:
-  build: mongo/
-  hostname: "nosqldb"
-  volumes:
-   - "/data/db:/data/db"
+  mongodb:
+    build: mongodb/
+    depends_on:
+    - elk
+    hostname: mongodb
+    container_name: mongodb
+    volumes:
+    - music_data:/data/db:rw
+    - music_data:/data/configdb:rw
 
-elk:
-  build: elk/
-  ports:
-   - "8081:80"
-   - "8082:9200"
-  expose:
-   - "5000/udp"
+  elk:
+    image: sebp/elk:latest
+    ports:
+    - 5601:5601
+    - 9200:9200
+    - 5044:5044
+    - 5000:5000
+    hostname: elk
+    container_name: elk
 
-logspout:
-  build: logspout/
-  volumes:
-   - "/var/run/docker.sock:/var/run/docker.sock"
-  links:
-   - elk
-  ports:
-   - "8083:80"
-  environment:
-    - ROUTE_URIS=logstash://elk:5000
+volumes:
+  music_data:
+    external: true
+
+networks: {}
