@@ -1,6 +1,8 @@
+[![Build Status](https://semaphoreci.com/api/v1/projects/eed90706-8a71-4b8a-ae7f-3519df02b67d/532587/badge.svg)](https://semaphoreci.com/garystafford/spring-music)  [![Build Status](https://travis-ci.org/garystafford/spring-music.svg?branch=springmusic_v2)](https://travis-ci.org/garystafford/spring-music)
+
 _Build a multi-container, MongoDB-backed, Java Spring web application, and deploy to a test environment using Docker._
 
-![Project Architecture](https://programmaticponderings.files.wordpress.com/2015/09/spring-music-diagram.png)
+![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music1.png)
 
 [Introduction](#introduction)  
 [Application Architecture](#application-architecture)  
