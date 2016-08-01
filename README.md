@@ -10,12 +10,12 @@ _Build a multi-container, MongoDB-backed, Java Spring web application, and deplo
 [Helpful Links](#spring-music-application-links)
 
 ### Docker 1.12 and Filebeat
-This post was updated in July, 2016, to reflect changes in Docker 1.12, including the use of Docker Compose's v2 yaml format and scale feature. This post does make use Docker Swarm for scaling. The post's example project was also updated to use Filebeat with ELK, as opposed to Logstash and Logspout.
+This post was updated in July, 2016, to reflect changes in Docker 1.12, including the use of Docker Compose's v2 YAML format and scale feature. This post does make use Docker Swarm for scaling. The post's example project was also updated to use Filebeat with ELK, as opposed to Logstash and Logspout, previously.
 
 ### Introduction
 In this post, we will demonstrate how to build, deploy, and host a multi-tier Java application using Docker. For the demonstration, we will use a sample Java Spring application, available on GitHub from Cloud Foundry. Cloud Foundry's [Spring Music](https://github.com/cloudfoundry-samples/spring-music) sample record album collection application was originally designed to demonstrate the use of database services on [Cloud Foundry](http://www.cloudfoundry.com) and [Spring Framework](http://www.springframework.org). Instead of Cloud Foundry, we will host the Spring Music application using Docker with VirtualBox and optionally, AWS.
 
-All files required to build this post's demonstration are located in the `docker_v2` branch of the [garystafford/spring-music-docker](https://github.com/garystafford/spring-music-docker/tree/docker_v2) repository. Instructions to clone the repository are below. The Java Spring Music application's source code, used in this post's demonstration, are located in the `docker_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music/tree/docker_v2) repository.
+All files required to build this post's demonstration are located in the `docker_v2` branch of the [garystafford/spring-music-docker](https://github.com/garystafford/spring-music-docker/tree/docker_v2) repository. Instructions to clone the repository are below. The Java Spring Music application's source code, used in this post's demonstration, are located in the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music/tree/springmusic_v2) repository.
 
 ![Spring Music Application](https://programmaticponderings.files.wordpress.com/2015/09/spring-music.png)
 

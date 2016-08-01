@@ -30,7 +30,7 @@ docker network create -d bridge music_app-net
 docker-compose -p music up -d elk
 docker-compose -p music up -d mongodb
 docker-compose -p music up -d app
-docker-compose scale app=2
+docker-compose scale app=3
 docker-compose -p music up -d proxy
 
 # optional: configure local DNS resolution for application URL
