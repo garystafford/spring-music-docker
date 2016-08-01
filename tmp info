@@ -1,0 +1,55 @@
+5  ls -al /usr/local/tomcat/logs/
+6  ls -al /usr/local/tomcat/
+7  ls -al /usr/local/tomcat/bin/
+8  top
+9  ls -al /usr/local/tomcat/webapps/
+10  ls -al /usr/local/tomcat/bin/
+11  sh /usr/local/tomcat/bin/catalina.sh
+12  sh /usr/local/tomcat/bin/startup.sh
+13  ls -al /usr/local/tomcat/logs/
+14  cat /usr/local/tomcat/logs/catalina.out
+15  cat /usr/local/tomcat/logs/catalina.out
+16  ls -al /usr/local/tomcat/logs/
+17  sh /usr/local/tomcat/bin/startup.sh tail --help
+18  man tail
+19  cat /usr/local/tomcat/logs/catalina.2016-07-31.log
+
+
+drwxr-xr-x  2 root root   4096 Jul 31 20:39 .
+drwxr-sr-x 17 root staff  4096 Jul 31 20:39 ..
+-rw-r--r--  1 root root   6718 Jul 31 20:39 catalina.2016-07-31.log
+-rw-r--r--  1 root root  11798 Jul 31 20:39 catalina.out
+-rw-r--r--  1 root root      0 Jul 31 20:39 host-manager.2016-07-31.log
+-rw-r--r--  1 root root    804 Jul 31 20:39 localhost.2016-07-31.log
+-rw-r--r--  1 root root    161 Jul 31 20:40 localhost_access_log.2016-07-31.txt
+-rw-r--r--  1 root root      0 Jul 31 20:39 manager.2016-07-31.log
+
+drwxr-xr-x  2 root root    4096 Jul  8 20:10 .
+drwxr-sr-x 13 root staff   4096 Jul 31 13:27 ..
+-rw-r--r--  1 root root   28680 Jun  9 13:56 bootstrap.jar
+-rw-r--r--  1 root root    1647 Jun  9 13:58 catalina-tasks.xml
+-rwxr-xr-x  1 root root   22229 Jun  9 13:56 catalina.sh
+-rw-r--r--  1 root root  204944 Jun  9 13:56 commons-daemon-native.tar.gz
+-rw-r--r--  1 root root   24283 Jun  9 13:56 commons-daemon.jar
+-rwxr-xr-x  1 root root    1922 Jun  9 13:56 configtest.sh
+-rwxr-xr-x  1 root root    7888 Jun  9 13:56 daemon.sh
+-rwxr-xr-x  1 root root    1965 Jun  9 13:56 digest.sh
+-rwxr-xr-x  1 root root    3547 Jun  9 13:56 setclasspath.sh
+-rwxr-xr-x  1 root root    1902 Jun  9 13:56 shutdown.sh
+-rwxr-xr-x  1 root root    1904 Jun  9 13:56 startup.sh
+-rw-r--r--  1 root root   40845 Jun  9 13:56 tomcat-juli.jar
+-rwxr-xr-x  1 root root    5061 Jun  9 13:56 tool-wrapper.sh
+-rwxr-xr-x  1 root root    1908 Jun  9 13:56 version.sh
+
+16:08:48-gstafford:~/Documents/projects/$ docker swarm init
+Swarm initialized: current node (3vuqhe8dz5yyr2bpregxew9ky) is now a manager.
+
+To add a worker to this swarm, run the following command:
+    docker swarm join \
+    --token SWMTKN-1-3wuo0n7n98ldqi5l6c824iam6xb3mjrl16d4yfd5ezmrrqfpgc-9f6b6zmiox9lyg6a2xhupwqwv \
+    192.168.65.2:2377
+
+To add a manager to this swarm, run the following command:
+    docker swarm join \
+    --token SWMTKN-1-3wuo0n7n98ldqi5l6c824iam6xb3mjrl16d4yfd5ezmrrqfpgc-872dmq55rg9eeq29g5dj2p5i3 \
+    192.168.65.2:2377

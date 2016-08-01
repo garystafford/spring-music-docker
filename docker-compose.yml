@@ -5,32 +5,26 @@ services:
     build: nginx/
     ports:
     - 80:80
+    networks:
+    - app-net
     depends_on:
-    - app01
-    - app02
+    - app
     hostname: proxy
     container_name: proxy
 
-  app01:
+  app:
     build: tomcat/
     ports:
-    - 8180:8080
+    - 8080
+    networks:
+    - app-net
     depends_on:
     - mongodb
-    hostname: app01
-    container_name: app01
-
-  app02:
-    build: tomcat/
-    ports:
-    - 8280:8080
-    depends_on:
-    - mongodb
-    hostname: app02
-    container_name: app02
 
   mongodb:
     build: mongodb/
+    networks:
+    - app-net
     depends_on:
     - elk
     hostname: mongodb
@@ -46,6 +40,8 @@ services:
     - 9200:9200
     - 5044:5044
     - 5000:5000
+    networks:
+    - app-net
     hostname: elk
     container_name: elk
 
@@ -53,4 +49,6 @@ volumes:
   music_data:
     external: true
 
-networks: {}
+networks:
+  app-net:
+    driver: bridge
