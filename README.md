@@ -387,7 +387,6 @@ Assuming `springmusic` VM is running at `192.168.99.100`:
 * NGINX Status: [192.168.99.100/nginx_status](http://192.168.99.100/nginx_status)
 * Tomcat Console - music_app_1*: [192.168.99.100:32771/manager](http://192.168.99.100:32771/manager)
 * Spring Environment - music_app_1: [192.168.99.100:32771/env](http://192.168.99.100:32771/env)
-
 * Kibana Console: [192.168.99.100:5601](http://192.168.99.100:5601)
 * Elasticsearch Info: [192.168.99.100:9200](http://192.168.99.100:8082)
 * Elasticsearch Status: [192.168.99.100:9200/_status?pretty](http://192.168.99.100:8082/_status?pretty)
