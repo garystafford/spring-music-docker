@@ -19,7 +19,7 @@ In this post, we will demonstrate how to build, deploy, and host a multi-tier Ja
 
 All files required to build this post's demonstration are located in the `docker_v2` branch of the [garystafford/spring-music-docker](https://github.com/garystafford/spring-music-docker/tree/docker_v2) repository. Instructions to clone the repository are below. The Java Spring Music application's source code, used in this post's demonstration, are located in the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music/tree/springmusic_v2) repository.
 
-![Spring Music Application](https://programmaticponderings.files.wordpress.com/2015/09/spring-music.png)
+![Spring Music Application](https://programmaticponderings.files.wordpress.com/2016/08/spring-music2.png)
 
 A few changes were necessary to the original Spring Music application to make it work for the this demonstration. At a high-level, the changes included:
 
