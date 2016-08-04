@@ -351,7 +351,7 @@ ec47f6c0147d        sebp/elk:latest     "/usr/local/bin/start"   4 minutes ago  
 ```
 
 ### Testing the Application
-Partial result of the curl test, hitting the NGINX address. Note the difference of the 'Upstream-Address', for Tomcat application instances (`music_app_1`, `music_app_2`, `music_app_3`). Also, note the sharp decrease in the 'Request-Time', for the same Tomcat application instance, due to caching, between the first and last request.
+Partial result of the curl test, hitting the NGINX address. Note the difference of the 'Upstream-Address', for Tomcat application instances (`music_app_1`, `music_app_2`, `music_app_3`). This demonstrates NGINX's load-balancing is working. Also, note the sharp decrease in the 'Request-Time' due to caching, for the same Tomcat application instance, based on the 'Upstream-Address', between the first and fourth requests.
 ```text
 ? for i in {1..10}; do curl -I $(docker-machine ip springmusic);done
 HTTP/1.1 200 OK
