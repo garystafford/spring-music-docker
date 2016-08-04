@@ -21,20 +21,21 @@ docker-machine env springmusic && \
 eval "$(docker-machine env springmusic)"
 
 # create directory to store mongo data on host
+# ** assumes your project folder is 'music' **
 docker volume create --name music_data
 
 # create bridge network for project
 docker network create -d bridge music_app-net
 
-# build images and containers
-docker-compose -p music up -d elk
-docker-compose -p music up -d mongodb
-docker-compose -p music up -d app
-docker-compose scale app=3
+# build images and orchestrate start-up of containers (in this order!)
+docker-compose -p music up -d elk && sleep 15 && \
+docker-compose -p music up -d mongodb && sleep 15 && \
+docker-compose -p music up -d app && \
+docker-compose scale app=3 && sleep 15 && \
 docker-compose -p music up -d proxy
 
 # optional: configure local DNS resolution for application URL
 #echo "$(docker-machine ip springmusic)   springmusic.com" | sudo tee --append /etc/hosts
 
-# run quick connectivity test of application
+# run a simple connectivity test of application
 for i in {1..10}; do curl -I $(docker-machine ip springmusic); done
