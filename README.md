@@ -12,17 +12,18 @@ _Build and monitor a multi-container, MongoDB-backed, Java Spring web applicatio
 [Helpful Links](#spring-music-application-links)
 
 ### Post Update: Docker 1.12 and Filebeat
-This post and the post's example project were updated in July 2016, to reflect changes in Docker 1.12, including the use of Docker Compose's v2 YAML format, and scaling feature. Presently, the project does make use Docker Swarm for scaling. The project was also updated to use Filebeat with ELK, as opposed to Logspout, used previously.
+This post, and the post's example project were updated in July 2016 to reflect changes in Docker 1.12, including the use of Docker Compose's v2 YAML format, and scaling feature. Presently, the project does make use Docker Swarm for scaling. The project was also updated to use Filebeat with ELK, as opposed to Logspout, used previously.
 
 ### Introduction
-In this post, we will demonstrate how to build, deploy, and host a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, and monitored with Filebeat and ELK, all containerized with Docker. We will use a sample Java Spring application, [Spring Music](https://github.com/cloudfoundry-samples/spring-music), available on GitHub from Cloud Foundry. Cloud Foundry's Spring Music sample record album collection application was originally designed to demonstrate the use of database services on [Cloud Foundry](http://www.cloudfoundry.com), using the [Spring Framework](http://www.springframework.org). Instead of Cloud Foundry, we will host the Spring Music application using Docker on VirtualBox and optionally, AWS.
+In this post, we will demonstrate how to build, deploy, and host a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, monitored with Filebeat and ELK, and all containerized with Docker.
+
+We will use a sample Java Spring application, [Spring Music](https://github.com/cloudfoundry-samples/spring-music), available on GitHub from Cloud Foundry. The Spring Music sample record album collection application was originally designed to demonstrate the use of database services on [Cloud Foundry](http://www.cloudfoundry.com), using the [Spring Framework](http://www.springframework.org). Instead of Cloud Foundry, we will host the Spring Music application locally, using Docker on VirtualBox, and optionally, AWS.
 
 All files necessary to build this project are stored on the `docker_v2` branch of the [garystafford/spring-music-docker](https://github.com/garystafford/spring-music-docker/tree/docker_v2) repository on GitHub. The Spring Music source code is stored on the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music/tree/springmusic_v2) repository, also on GitHub.
 
 ![Spring Music Application](https://programmaticponderings.files.wordpress.com/2016/08/spring-music2.png)
 
 A few changes were necessary to the original Spring Music application to make it work for this demonstration. At a high-level, the changes included:
-
 * Modify MongoDB configuration class to work with non-local, containerized MongoDB instances
 * Add Gradle `warNoStatic` task to build WAR file without the static assets, which will be host separately in NGINX
 * Create new Gradle task, `zipStatic`, to ZIP up the application's static assets for deployment to NGINX
@@ -33,7 +34,6 @@ A few changes were necessary to the original Spring Music application to make it
 
 ### Application Architecture
 The Java Spring Music application stack contains the following technologies:
-
 * [Java](http://openjdk.java.net)
 * [Spring Framework](http://projects.spring.io/spring-framework)
 * [NGINX](http://nginx.org)
@@ -42,7 +42,9 @@ The Java Spring Music application stack contains the following technologies:
 * [ELK Stack](https://www.elastic.co/products)
 * [Filebeat](https://www.elastic.co/products/beats/filebeat)
 
-The Spring Music web application's static content will be hosted by [NGINX](http://nginx.org) for increased performance. The application's WAR file will be hosted by [Apache Tomcat](http://tomcat.apache.org). Requests for non-static content will be proxied through a single instance of NGINX on the front-end, a set of load-balanced Tomcat instances on the back-end. To further increase application performance, NGINX will also be configured to allow for browser caching of the static content. Reverse proxying and caching are configured thought NGINX's `default.conf` file, in the `server` configuration section:
+For increased performance, the Spring Music web application's static content will be hosted by [NGINX](http://nginx.org). The application's WAR file will be hosted by [Apache Tomcat](http://tomcat.apache.org). Requests for non-static content will be proxied through a single instance of NGINX on the front-end, to a set of load-balanced Tomcat instances on the back-end. To further increase application performance, NGINX will also be configured to allow for browser caching of the static content.
+
+Reverse proxying and caching are configured thought NGINX's `default.conf` file, in the `server` configuration section:
 ```text
 server {
   listen        80;
@@ -77,7 +79,6 @@ Lastly, the ELK Stack with Filebeat, will aggregate both Docker and Java Log4j l
 
 ### Spring Music Environment
 We will use the following technologies, to build, deploy, and host the Java Spring Music application:
-
 * [Gradle](https://gradle.org)
 * [git](https://git-scm.com)
 * [GitHub](https://github.com)
@@ -87,9 +88,9 @@ We will use the following technologies, to build, deploy, and host the Java Spri
 * [Docker Compose](https://www.docker.com/docker-compose)
 * [Docker Machine](https://www.docker.com/docker-machine)
 * [Docker Hub](https://hub.docker.com)
-* _optional:_ [Amazon Web Services (AWS)](http://aws.amazon.com)
+* _Optionally,_ [Amazon Web Services (AWS)](http://aws.amazon.com)
 
-In this post's example, build artifacts, specifically, a WAR file and a ZIP file, are built automatically by [Travis CI](https://travis-ci.org) when changes are checked into the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. Travis CI then overwrites the build artifacts back to a [build artifact](https://github.com/garystafford/spring-music/tree/build-artifacts) branch of that same project. The build artifact branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project. Build results are sent to my Slack channel. The `.travis.yaml`, `gradle.build`, and `deploy.sh` script files handle these functions. You can easily replicate this build automation, using your own continuous integration server, such as Travis CI, Semaphore, or Jenkins.
+In this post's example, the build artifacts, specifically, a WAR and ZIP file, are built automatically by [Travis CI](https://travis-ci.org) when changes are checked into the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. After a successful build, Travis CI then overwrites the build artifacts back to the `[build-artifacts](https://github.com/garystafford/spring-music/tree/build-artifacts)` branch of that same project. The `build-artifacts` branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project, much like Artifactory. Build results are sent to my Slack channel. The `.travis.yaml`, `gradle.build`, and `deploy.sh` script files handle these functions. You can easily replicate this build automation, using your own continuous integration server, such as Travis CI, Semaphore, or Jenkins.
 
 .travis.yaml file:
 ```yaml
