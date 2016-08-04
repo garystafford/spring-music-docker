@@ -77,7 +77,7 @@ Lastly, the ELK Stack with Filebeat, will aggregate both Docker and Java Log4j l
 
 ![Kibana 4 Web Console](https://programmaticponderings.files.wordpress.com/2016/08/kibana4_output_filebeat1.png)
 
-### Spring Music Environment
+### Building Spring Music
 We will use the following technologies, to build, deploy, and host the Java Spring Music application:
 * [Gradle](https://gradle.org)
 * [git](https://git-scm.com)
@@ -174,9 +174,9 @@ git commit -m "Deploy Travis CI build #${TRAVIS_BUILD_NUMBER} artifacts to GitHu
 
 git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:build-artifacts > /dev/null 2>&1
 ```
-Base Docker images, such as NGINX, Tomcat, and MongoDB, used to build the project's images and subsequently the containers, are all pulled from Docker Hub.
+Base Docker images for NGINX, Tomcat, ELK, and MongoDB, are all pulled from Docker Hub.
 
-The NGINX and Tomcat Dockerfiles pull the latest build artifacts down to build the project-specific versions of the NGINX and Tomcat Docker images used for this project. For example, the abridged NGINX `Dockerfile` looks like:
+The NGINX and Tomcat Dockerfiles pull the latest Spring Music build artifacts, and build build-specific versions of the NGINX and Tomcat Docker images used for this project. For example, the abridged NGINX `Dockerfile` looks like:
 ```text
 FROM nginx
 
@@ -256,7 +256,7 @@ networks:
     driver: bridge
 ```
 
-### Building the Environment
+### Building the Docker Environment Locally
 Make sure VirtualBox, Docker, Docker Compose, and Docker Machine, are all installed and running. At the time of this post, I have the following versions of software running on my Mac:
 ```text
 VirtualBox 5.0.26r108824
@@ -318,14 +318,14 @@ for i in {1..10}; do curl -I $(docker-machine ip springmusic); done
 
 By simply changing the driver to AWS EC2 and providing your AWS credentials, the same environment can be built on AWS within a single EC2 instance. The 'springmusic' environment has been fully tested both locally with VirtualBox, as well as on AWS.
 
-**Results**
-Resulting Docker images and containers:
+### The Results
+The resulting Docker Machine, a VirtualBox VM:
 ```text
 $ docker-machine ls
 NAME          ACTIVE   DRIVER       STATE     URL                         SWARM              DOCKER        ERRORS
 springmusic   *        virtualbox   Running   tcp://192.168.99.100:2376                      v1.12.0-rc5
 ```
-
+The resulting Docker images, both the (4) base images and (3) project images:
 ```text
 $ docker images
 REPOSITORY            TAG                 IMAGE ID            CREATED             SIZE
@@ -336,7 +336,9 @@ sebp/elk              latest              7916c6886a65        5 days ago        
 mongo                 latest              7f09d45df511        2 weeks ago         336.1 MB
 tomcat                latest              25e98610c7d0        3 weeks ago         359.2 MB
 nginx                 latest              0d409d33b27e        8 weeks ago         182.8 MB
+```
 
+The resulting (6) Docker containers:
 ```text
 $ docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                                                                                      NAMES
@@ -348,7 +350,8 @@ a0d1c5336d6a        music_mongodb       "/entrypoint.sh mongo"   3 minutes ago  
 ec47f6c0147d        sebp/elk:latest     "/usr/local/bin/start"   4 minutes ago       Up 4 minutes        0.0.0.0:5000->5000/tcp, 0.0.0.0:5044->5044/tcp, 0.0.0.0:5601->5601/tcp, 0.0.0.0:9200->9200/tcp, 9300/tcp   elk
 ```
 
-Partial result of the curl test, calling NGINX. Note the difference of the 'Upstream-Address', for Tomcat application instances (`music_app_1`, `music_app_2`, `music_app_3`). Also, note the sharp decrease in the 'Request-Time', for the same Tomcat application instance, due to caching, between the first and last request.
+### Testing the Application
+Partial result of the curl test, hitting the NGINX address. Note the difference of the 'Upstream-Address', for Tomcat application instances (`music_app_1`, `music_app_2`, `music_app_3`). Also, note the sharp decrease in the 'Request-Time', for the same Tomcat application instance, due to caching, between the first and last request.
 ```text
 ? for i in {1..10}; do curl -I $(docker-machine ip springmusic);done
 HTTP/1.1 200 OK
