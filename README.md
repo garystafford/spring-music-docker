@@ -90,7 +90,11 @@ We will use the following technologies, to build, deploy, and host the Java Spri
 * [Docker Hub](https://hub.docker.com)
 * _Optionally,_ [Amazon Web Services (AWS)](http://aws.amazon.com)
 
-In this post's example, the build artifacts, specifically, a WAR and ZIP file, are built automatically by [Travis CI](https://travis-ci.org) when changes are checked into the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. After a successful build, Travis CI then overwrites the build artifacts back to the `[build-artifacts](https://github.com/garystafford/spring-music/tree/build-artifacts)` branch of that same project. The `build-artifacts` branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project, much like Artifactory. Build results are sent to my Slack channel. The `.travis.yaml`, `gradle.build`, and `deploy.sh` script files handle these functions. You can easily replicate this build automation, using your own continuous integration server, such as Travis CI, Semaphore, or Jenkins.
+In this post's example, the build artifacts, specifically, a WAR and ZIP file, are built automatically by [Travis CI](https://travis-ci.org) when changes are checked into the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. After a successful build, Travis CI then overwrites the build artifacts back to the `[build-artifacts](https://github.com/garystafford/spring-music/tree/build-artifacts)` branch of that same project.
+
+![Travis CI Output](https://programmaticponderings.files.wordpress.com/2016/08/travisci1.png)
+
+The `build-artifacts` branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project, much like Artifactory. Build results are sent to my Slack channel. The `.travis.yaml`, `gradle.build`, and `deploy.sh` script files handle these functions. You can easily replicate this build automation, using your own continuous integration server, such as Travis CI, Semaphore, or Jenkins.
 
 .travis.yaml file:
 ```yaml
