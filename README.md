@@ -1,6 +1,6 @@
 [![Build Status](https://semaphoreci.com/api/v1/projects/eed90706-8a71-4b8a-ae7f-3519df02b67d/532587/badge.svg)](https://semaphoreci.com/garystafford/spring-music)  [![Build Status](https://travis-ci.org/garystafford/spring-music.svg?branch=springmusic_v2)](https://travis-ci.org/garystafford/spring-music)
 
-_Build a multi-container, MongoDB-backed, Java Spring web application, and deploy to a test environment using Docker._
+_Build and monitor a multi-container, MongoDB-backed, Java Spring web application, and deploy to a test environment using Docker._
 
 ![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music1.png)
 
@@ -12,7 +12,7 @@ _Build a multi-container, MongoDB-backed, Java Spring web application, and deplo
 [Helpful Links](#spring-music-application-links)
 
 ### Post Update: Docker 1.12 and Filebeat
-This post and the post's example project were updated in July 2016, to reflect changes in Docker 1.12, including the use of Docker Compose's v2 YAML format, and scaling feature. The post's example project does make use Docker Swarm for scaling. The post's example project was also updated to use Filebeat with ELK, as opposed to Logspout, previously.
+This post and the post's example project were updated in July 2016, to reflect changes in Docker 1.12, including the use of Docker Compose's v2 YAML format, and scaling feature. Presently, the project does make use Docker Swarm for scaling. The project was also updated to use Filebeat with ELK, as opposed to Logspout, used previously.
 
 ### Introduction
 In this post, we will demonstrate how to build, deploy, and host a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, and monitored with Filebeat and ELK, all containerized with Docker. We will use a sample Java Spring application, [Spring Music](https://github.com/cloudfoundry-samples/spring-music), available on GitHub from Cloud Foundry. Cloud Foundry's Spring Music sample record album collection application was originally designed to demonstrate the use of database services on [Cloud Foundry](http://www.cloudfoundry.com), using the [Spring Framework](http://www.springframework.org). Instead of Cloud Foundry, we will host the Spring Music application using Docker on VirtualBox and optionally, AWS.
