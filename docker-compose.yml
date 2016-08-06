@@ -6,7 +6,7 @@ services:
     ports:
     - 80:80
     networks:
-    - app-net
+    - net
     depends_on:
     - app
     hostname: proxy
@@ -17,14 +17,14 @@ services:
     ports:
     - 8080
     networks:
-    - app-net
+    - net
     depends_on:
     - mongodb
 
   mongodb:
     build: mongodb/
     networks:
-    - app-net
+    - net
     depends_on:
     - elk
     hostname: mongodb
@@ -41,7 +41,7 @@ services:
     - 5044:5044
     - 5000:5000
     networks:
-    - app-net
+    - net
     hostname: elk
     container_name: elk
 
@@ -50,5 +50,5 @@ volumes:
     external: true
 
 networks:
-  app-net:
+  net:
     driver: bridge

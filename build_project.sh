@@ -13,7 +13,7 @@ git clone -b master --single-branch \
   https://github.com/garystafford/spring-music-docker.git && \
 cd spring-music-docker
 
-# build VM
+# provision VirtualBox VM
 docker-machine create --driver virtualbox springmusic
 
 # set new environment
@@ -25,7 +25,8 @@ eval "$(docker-machine env springmusic)"
 docker volume create --name music_data
 
 # create bridge network for project
-docker network create -d bridge music_app-net
+# ** assumes your project folder is 'music' **
+docker network create -d bridge music_net
 
 # build images and orchestrate start-up of containers (in this order!)
 docker-compose -p music up -d elk && sleep 15 && \

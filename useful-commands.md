@@ -15,6 +15,10 @@ docker start elk && sleep 15 && \
 docker start mongodb && sleep 15 && \
 docker start music_app_1 music_app_2 music_app_3 && sleep 15 && \
 docker start proxy
+
+# inspect VM
+docker-machine inspect springmusic
+docker-machine ssh springmusic
 ```
 
 #### Application Startup Issues
@@ -32,6 +36,9 @@ docker logs music_app_1
 # remove application containers and images
 docker rm -f music_app_1 music_app_2 music_app_3
 docker rmi music_app music_app
+
+# remove dangling (unused) volumes
+docker volume rm $(docker volume ls -qf dangling=true)
 ```
 
 #### Useful Links

@@ -208,7 +208,7 @@ services:
     ports:
     - 80:80
     networks:
-    - app-net
+    - net
     depends_on:
     - app
     hostname: proxy
@@ -219,14 +219,14 @@ services:
     ports:
     - 8080
     networks:
-    - app-net
+    - net
     depends_on:
     - mongodb
 
   mongodb:
     build: mongodb/
     networks:
-    - app-net
+    - net
     depends_on:
     - elk
     hostname: mongodb
@@ -243,7 +243,7 @@ services:
     - 5044:5044
     - 5000:5000
     networks:
-    - app-net
+    - net
     hostname: elk
     container_name: elk
 
@@ -252,7 +252,7 @@ volumes:
     external: true
 
 networks:
-  app-net:
+  net:
     driver: bridge
 ```
 
@@ -291,7 +291,7 @@ git clone -b master --single-branch \
   https://github.com/garystafford/spring-music-docker.git && \
 cd spring-music-docker
 
-# build VM
+# provision VirtualBox VM
 docker-machine create --driver virtualbox springmusic
 
 # set new environment
@@ -299,11 +299,12 @@ docker-machine env springmusic && \
 eval "$(docker-machine env springmusic)"
 
 # create directory to store mongo data on host
+# ** assumes your project folder is 'music' **
 docker volume create --name music_data
 
 # create bridge network for project
 # ** assumes your project folder is 'music' **
-docker network create -d bridge music_app-net
+docker network create -d bridge music_net
 
 # build images and orchestrate start-up of containers (in this order!)
 docker-compose -p music up -d elk && sleep 15 && \
@@ -319,13 +320,28 @@ for i in {1..10}; do curl -I $(docker-machine ip springmusic); done
 By simply changing the driver to AWS EC2 and providing your AWS credentials, the same environment can be built on AWS within a single EC2 instance. The 'springmusic' environment has been fully tested both locally with VirtualBox, as well as on AWS.
 
 ### The Results
-The resulting Docker Machine, a VirtualBox VM:
+Resulting Docker Machine, a VirtualBox VM:
 ```text
 $ docker-machine ls
 NAME          ACTIVE   DRIVER       STATE     URL                         SWARM              DOCKER        ERRORS
 springmusic   *        virtualbox   Running   tcp://192.168.99.100:2376                      v1.12.0-rc5
 ```
-The resulting Docker images, both the (4) base images and (3) project images:
+
+Resulting external volume
+```text
+$ docker volume ls
+DRIVER              VOLUME NAME
+local               music_data
+```
+
+Resulting bridge network
+```text
+$ docker network ls
+NETWORK ID          NAME             DRIVER              SCOPE
+f564dfa1b440        music_net        bridge              local
+```
+
+Resulting Docker images, both the (4) base images and (3) project images:
 ```text
 $ docker images
 REPOSITORY            TAG                 IMAGE ID            CREATED             SIZE
@@ -338,7 +354,7 @@ tomcat                latest              25e98610c7d0        3 weeks ago       
 nginx                 latest              0d409d33b27e        8 weeks ago         182.8 MB
 ```
 
-The resulting (6) Docker containers:
+Resulting (6) Docker containers:
 ```text
 $ docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                                                                                      NAMES
@@ -445,6 +461,6 @@ _* The Tomcat user name is `admin` and the password is `t0mcat53rv3r`._
 * [Introduction to Gradle](https://semaphoreci.com/community/tutorials/introduction-to-gradle)
 * [Spring Framework](http://projects.spring.io/spring-framework)
 * [Understanding Nginx HTTP Proxying, Load Balancing, Buffering, and Caching](https://www.digitalocean.com/community/tutorials/understanding-nginx-http-proxying-load-balancing-buffering-and-caching)
-[Common conversion patterns for log4j's PatternLayout](http://www.codejava.net/coding/common-conversion-patterns-for-log4js-patternlayout)
+* [Common conversion patterns for log4j's PatternLayout](http://www.codejava.net/coding/common-conversion-patterns-for-log4js-patternlayout)
 * [Spring @PropertySource example](http://www.mkyong.com/spring/spring-propertysources-example)
 * [Java log4j logging](http://help.papertrailapp.com/kb/configuration/java-log4j-logging/)
