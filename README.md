@@ -203,7 +203,10 @@ RUN wget -O /tmp/${STATIC_FILE} ${GITHUB_REPO}/${STATIC_FILE} \
 COPY default.conf /etc/nginx/conf.d/default.conf
 ```
 
-Docker Machine provisions a single VirtualBox VM, named `springmusic`, to host all the containers. Next, a Docker data volume and project-specific Docker bridge network are built. Then, Docker Compose builds all images if not present, then builds and deploys (1) NGINX container, (3) Tomcat containers, (1) MongoDB container, and (1) ELK container, onto the VirtualBox VM. VirtualBox provides a quick and easy solution that can be run locally for initial development and testing of the application.
+Docker Machine provisions a single VirtualBox VM, named `springmusic`, to host all the containers. VirtualBox provides a quick and easy solution that can be run locally for initial development and testing of the application.
+
+Next, a Docker data volume and project-specific Docker bridge network are built. Then, Docker Compose builds all images if not present, then builds and deploys (1) NGINX container, (3) Tomcat containers, (1) MongoDB container, and (1) ELK container, onto the VirtualBox VM.
+
 
 ![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram.png)
 
