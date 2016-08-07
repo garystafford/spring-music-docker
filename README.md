@@ -12,7 +12,7 @@ _Build and monitor a multi-container, MongoDB-backed, Java Spring web applicatio
 [Helpful Links](#spring-music-application-links)
 
 ### Post Update: Docker 1.12 and Filebeat
-This post, and the post's example project were updated in July 2016 to reflect changes in Docker 1.12, including the use of Docker Compose's v2 YAML format, and scaling feature. Presently, the project does make use Docker Swarm for scaling. The project was also updated to use Filebeat with ELK, as opposed to Logspout, used previously.
+This post and the post's example project were updated in July 2016 to reflect changes in Docker 1.12, including the use of Docker Compose's v2 YAML format, and scaling feature. Presently, the project does make use Docker Swarm for scaling. The project was also updated to use Filebeat with ELK, as opposed to Logspout, used previously.
 
 ### Introduction
 In this post, we will demonstrate how to build, deploy, and host a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, monitored with Filebeat and ELK, and all containerized with Docker.
@@ -42,6 +42,7 @@ The Java Spring Music application stack contains the following technologies:
 * [ELK Stack](https://www.elastic.co/products)
 * [Filebeat](https://www.elastic.co/products/beats/filebeat)
 
+##### NGINX
 For increased performance, the Spring Music web application's static content will be hosted by [NGINX](http://nginx.org). The application's WAR file will be hosted by [Apache Tomcat](http://tomcat.apache.org). Requests for non-static content will be proxied through a single instance of NGINX on the front-end, to a set of load-balanced Tomcat instances on the back-end. To further increase application performance, NGINX will also be configured to allow for browser caching of the static content.
 
 Reverse proxying and caching are configured thought NGINX's `default.conf` file, in the `server` configuration section:
@@ -69,15 +70,17 @@ upstream backend {
 }
 ```
 
-The Spring Music application can be run with MySQL, Postgres, Oracle, MongoDB, Redis, or H2, an in-memory Java SQL database. Given the choice of both SQL and NoSQL databases available for use with the Spring Music application, we will select MongoDB.
+##### MongoDB
+The Spring Music application will run with MySQL, Postgres, Oracle, MongoDB, Redis, or H2, an in-memory Java SQL database. Given the choice of both SQL and NoSQL databases available for use with the Spring Music application, we will select MongoDB.
 
 The Spring Music application, hosted by Tomcat, will store and modify record album data in a single instance of MongoDB. MongoDB will be populated with a collection of album data when the Spring Music application first creates the MongoDB database instance.
 
+##### ELK
 Lastly, the ELK Stack with Filebeat, will aggregate both Docker and Java Log4j log entries, providing debugging and analytics to our demonstration. A similar method for aggregating logs, using Logspout instead of Filebeat, is detailed in a previous [post](https://programmaticponderings.wordpress.com/2015/08/02/log-aggregation-visualization-and-analysis-of-microservices-using-elk-stack-and-logspout/).
 
 ![Kibana 4 Web Console](https://programmaticponderings.files.wordpress.com/2016/08/kibana4_output_filebeat1.png)
 
-### Building Spring Music
+### Build, Deploy, Host
 We will use the following technologies, to build, deploy, and host the Java Spring Music application:
 * [Gradle](https://gradle.org)
 * [git](https://git-scm.com)
@@ -90,15 +93,15 @@ We will use the following technologies, to build, deploy, and host the Java Spri
 * [Docker Hub](https://hub.docker.com)
 * _Optionally,_ [Amazon Web Services (AWS)](http://aws.amazon.com)
 
-In this post's example, the build artifacts, a WAR and ZIP file, are built automatically by [Travis CI](https://travis-ci.org), whenever changes are pushed to the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. After a successful build, Travis CI pushes the build artifacts to the `build-artifacts` branch on the same GitHub project. The `build-artifacts` branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project, much like JFrog's [Artifactory](https://www.jfrog.com/artifactory). Finally, Travis CI pushes build result notifications to a Slack channel, so you don't have to actively monitor the build.
+In this post's example, the two build artifacts, a WAR file for the app and ZIP file for the static web content, are built automatically by [Travis CI](https://travis-ci.org), whenever changes are pushed to the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. Following a successful build, Travis CI pushes the build artifacts to the `build-artifacts` branch on the same GitHub project. The `build-artifacts` branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project, much like JFrog's [Artifactory](https://www.jfrog.com/artifactory). Finally, Travis CI pushes build result notifications to a Slack channel, which eliminates the need to actively monitor the build.
 
 You can easily replicate this CI automation using your own continuous integration server, such as Travis CI, [Semaphore](https://semaphoreci.com), or [Jenkins](https://jenkins.io), coupled with a persistent chat application, such as  Glider Labs' [Slack](https://slack.com) or Atlassian's [HipChat](https://www.atlassian.com/software/hipchat). You could also simply push notifications to favorite IM app.
 
 ![Travis CI Output](https://programmaticponderings.files.wordpress.com/2016/08/travisci1.png)
 
-The `.travis.yaml`, `gradle.build`, and `deploy.sh` script files handle these functions:
+The Travis CI `.travis.yaml` file, custom `gradle.build` Gradle tasks, and the `deploy.sh` script handles the CI automation described, above.
 
-.travis.yaml file:
+Travis CI `.travis.yaml` file:
 ```yaml
 language: java
 jdk: oraclejdk8
@@ -112,13 +115,13 @@ script:
 env:
   global:
   - GH_REF: github.com/garystafford/spring-music.git
-  - secure: <secure hash here>
+  - secure: <your_secure_hash_here>
 notifications:
   slack:
-  - secure: <secure hash here>
+  - secure: <your_secure_hash_here>
 ```
 
-gradle.build tasks:
+Custom `gradle.build` tasks:
 ```groovy
 // new Gradle build tasks
 
@@ -156,7 +159,7 @@ task zipStatic(type: Zip) {
 }
 ```
 
-deploy.sh file:
+The `deploy.sh` file:
 ```bash
 #!/bin/bash
 
@@ -174,9 +177,11 @@ git commit -m "Deploy Travis CI build #${TRAVIS_BUILD_NUMBER} artifacts to GitHu
 
 git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:build-artifacts > /dev/null 2>&1
 ```
-Base Docker images for NGINX, Tomcat, ELK, and MongoDB, are all pulled from Docker Hub.
 
-The NGINX and Tomcat Dockerfiles pull the latest Spring Music build artifacts, and build build-specific versions of the NGINX and Tomcat Docker images used for this project. For example, the abridged NGINX `Dockerfile` looks like:
+### Docker
+Docker Compose, using the project's Dockerfiles, pulls base Docker images for NGINX, Tomcat, ELK, and MongoDB, from Docker Hub. Project-specific Docker images are then built, using the Dockerfiles, for NGINX, Tomcat, and MongoDB, based on the base images. While constructing the project-specific Docker images for NGINX and Tomcat, the latest Spring Music build artifacts are pulled and installed into the corresponding Docker images.
+
+For example, the abridged NGINX `Dockerfile` looks like:
 ```text
 FROM nginx
 
@@ -196,9 +201,10 @@ RUN wget -O /tmp/${STATIC_FILE} ${GITHUB_REPO}/${STATIC_FILE} \
 COPY default.conf /etc/nginx/conf.d/default.conf
 ```
 
-Docker Machine builds a single VirtualBox VM. After building the VM, Docker Compose then builds and deploys (1) NGINX container, (3) Tomcat containers, (1) MongoDB container, and (1) ELK container, onto the VM. Docker Machine's VirtualBox driver provides a quick and easy solution that can be run locally for testing and development.
+Docker Machine provisions a single VirtualBox VM, named `springmusic`, to host all the containers. Next, a Docker data volume and project-specific Docker bridge network are built. Then, Docker Compose builds all images if not present, then builds and deploys (1) NGINX container, (3) Tomcat containers, (1) MongoDB container, and (1) ELK container, onto the VirtualBox VM. VirtualBox provides a quick and easy solution that can be run locally for initial development and testing of the application.
 
-This post was recently updated for Docker 1.12.0, to use Docker Compose's v2 YAML file format. The post's example `docker-compose.yml` takes advantage of many of Docker 1.12 and Compose's v2 format:
+##### Docker Compose Upgraded
+This post was recently updated for Docker 1.12.0, to use Docker Compose's v2 YAML file format. The post's example `docker-compose.yml` takes advantage of many of Docker 1.12 and Compose's v2 format improved functionality:
 ```yaml
 version: '2'
 
@@ -257,31 +263,12 @@ networks:
 ```
 
 ### Building the Docker Environment Locally
-Make sure VirtualBox, Docker, Docker Compose, and Docker Machine, are all installed and running. At the time of this post, I have the following versions of software running on my Mac:
+Make sure VirtualBox, Docker, Docker Compose, and Docker Machine, are installed and running. At the time of this post, I have the following versions of software installed on my Mac, which is running OS X 10.11.6:
 ```text
-VirtualBox 5.0.26r108824
-
-Docker Client:
- Version:      1.12.0
- API version:  1.24
- Go version:   go1.6.3
- Git commit:   8eab29e
- Built:        Thu Jul 28 21:04:48 2016
- OS/Arch:      darwin/amd64
- Experimental: true
-
-Docker Server:
- Version:      1.12.0
- API version:  1.24
- Go version:   go1.6.3
- Git commit:   8eab29e
- Built:        Thu Jul 28 21:04:48 2016
- OS/Arch:      linux/amd64
- Experimental: true
-
-Docker Compose 1.8.0, build f3628c7
-
-Docker Machine 0.8.0, build b85aac1
+VirtualBox 5.0.26
+Docker 1.12.0
+Docker Compose 1.8.0
+Docker Machine 0.8.0
 ```
 
 All of the below commands may be executed with the following single command (`sh ./build_project.sh`). This is useful for working with [Jenkins CI](https://jenkins-ci.org/), [ThoughtWorks go](http://www.thoughtworks.com/products/go-continuous-delivery), or similar CI tools. However, I suggest building the project step-by-step, as shown below, to better understand the process.
@@ -317,7 +304,8 @@ docker-compose -p music up -d proxy
 for i in {1..10}; do curl -I $(docker-machine ip springmusic); done
 ```
 
-By simply changing the driver to AWS EC2 and providing your AWS credentials, the same environment can be built on AWS within a single EC2 instance. The 'springmusic' environment has been fully tested both locally with VirtualBox, as well as on AWS.
+##### AWS
+By simply changing the driver to AWS EC2 and providing your AWS credentials, the same environment can be built on AWS using a single EC2 instance. The `springmusic` environment has been fully tested both locally with VirtualBox, as well as on AWS.
 
 ### The Results
 Resulting Docker Machine, a VirtualBox VM:
