@@ -214,7 +214,7 @@ Docker Machine provisions a single VirtualBox VM, named `springmusic`, to host a
 
 ![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/springmusicdiagram2.png)
 
-##### Docker Compose Upgraded
+##### Docker Compose v2 YAML
 This post was recently updated for Docker 1.12.0, to use Docker Compose's v2 YAML file format. The post's example `docker-compose.yml` takes advantage of many of Docker 1.12 and Compose's v2 format improved functionality:
 ```yaml
 version: '2'
@@ -319,28 +319,28 @@ for i in {1..10}; do curl -I $(docker-machine ip springmusic); done
 By simply changing the driver to AWS EC2 and providing your AWS credentials, the same environment can be built on AWS using a single EC2 instance. The `springmusic` environment has been fully tested both locally with VirtualBox, as well as on AWS.
 
 ### The Results
-Resulting Docker Machine, a VirtualBox VM:
+Resulting Docker Machine VirtualBox VM:
 ```text
 $ docker-machine ls
 NAME          ACTIVE   DRIVER       STATE     URL                         SWARM              DOCKER        ERRORS
 springmusic   *        virtualbox   Running   tcp://192.168.99.100:2376                      v1.12.0-rc5
 ```
 
-Resulting external volume
+Resulting external volume:
 ```text
 $ docker volume ls
 DRIVER              VOLUME NAME
 local               music_data
 ```
 
-Resulting bridge network
+Resulting bridge network:
 ```text
 $ docker network ls
 NETWORK ID          NAME             DRIVER              SCOPE
 f564dfa1b440        music_net        bridge              local
 ```
 
-Resulting Docker images, both the (4) base images and (3) project images:
+Resulting Docker images - (4) base images and (3) project images:
 ```text
 $ docker images
 REPOSITORY            TAG                 IMAGE ID            CREATED             SIZE
