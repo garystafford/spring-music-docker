@@ -1,6 +1,6 @@
 [![Build Status](https://semaphoreci.com/api/v1/garystafford/spring-music/branches/springmusic_v2/badge.svg)](https://semaphoreci.com/garystafford/spring-music) [![Build Status](https://travis-ci.org/garystafford/spring-music.svg?branch=springmusic_v2)](https://travis-ci.org/garystafford/spring-music)
 
-## Spring Music Revisited: Build and Deploy a Java-Spring-MongoDB Web App with Docker 1.12
+## Spring Music Revisited: Java-Spring-MongoDB Web App with Docker 1.12
 _Build, deploy, and monitor a single-host, multi-container, MongoDB-backed, Java Spring web application using Docker 1.12._
 
 ![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/springmusicdiagram2.png)
