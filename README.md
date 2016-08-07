@@ -103,7 +103,7 @@ Following a successful build, Travis CI pushes the build artifacts to the `build
 
 Finally, Travis CI pushes build result notifications to a Slack channel, which eliminates the need to actively monitor the build.
 
-<p align="center"> ![Slack](https://programmaticponderings.files.wordpress.com/2016/08/img_2109.png?w=375) </p>
+![Slack](https://programmaticponderings.files.wordpress.com/2016/08/img_2109.png?w=375)
 
 You can easily replicate this CI automation using your own continuous integration server, such as Travis CI, [Semaphore](https://semaphoreci.com), or [Jenkins](https://jenkins.io), coupled with a persistent chat application, such as  Glider Labs' [Slack](https://slack.com) or Atlassian's [HipChat](https://www.atlassian.com/software/hipchat). You could also simply push notifications to favorite IM app.
 
