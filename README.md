@@ -5,13 +5,6 @@ _Build, deploy, and monitor a single-host, multi-container, MongoDB-backed, Java
 
 ![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram.png)
 
-[Introduction](#introduction)  
-[Application Architecture](#application-architecture)  
-[Spring Music Environment](#spring-music-environment)  
-[Building the Environment](#building-the-environment)  
-[Spring Music Application Links](#building-the-environment)  
-[Helpful Links](#spring-music-application-links)
-
 ### Introduction
 This post and the post’s example project were updated from a previous post, to incorporate many of the improvements made in Docker 1.12, including the use of Docker Compose’s v2 YAML format. The project was also updated to use Filebeat with ELK, as opposed to Logspout, which used previously.
 
