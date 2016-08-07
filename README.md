@@ -93,11 +93,19 @@ We will use the following technologies, to build, deploy, and host the Java Spri
 * [Docker Hub](https://hub.docker.com)
 * _Optionally,_ [Amazon Web Services (AWS)](http://aws.amazon.com)
 
-In this post's example, the two build artifacts, a WAR file for the app and ZIP file for the static web content, are built automatically by [Travis CI](https://travis-ci.org), whenever changes are pushed to the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub. Following a successful build, Travis CI pushes the build artifacts to the `build-artifacts` branch on the same GitHub project. The `build-artifacts` branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project, much like JFrog's [Artifactory](https://www.jfrog.com/artifactory). Finally, Travis CI pushes build result notifications to a Slack channel, which eliminates the need to actively monitor the build.
-
-You can easily replicate this CI automation using your own continuous integration server, such as Travis CI, [Semaphore](https://semaphoreci.com), or [Jenkins](https://jenkins.io), coupled with a persistent chat application, such as  Glider Labs' [Slack](https://slack.com) or Atlassian's [HipChat](https://www.atlassian.com/software/hipchat). You could also simply push notifications to favorite IM app.
+In this post's example, the two build artifacts, a WAR file for the app and ZIP file for the static web content, are built automatically by [Travis CI](https://travis-ci.org), whenever changes are pushed to the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub.
 
 ![Travis CI Output](https://programmaticponderings.files.wordpress.com/2016/08/travisci1.png)
+
+Following a successful build, Travis CI pushes the build artifacts to the `build-artifacts` branch on the same GitHub project. The `build-artifacts` branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project, much like JFrog's [Artifactory](https://www.jfrog.com/artifactory).
+
+![Build Artifact Respository](https://programmaticponderings.files.wordpress.com/2016/08/build-artifacts.png)
+
+Finally, Travis CI pushes build result notifications to a Slack channel, which eliminates the need to actively monitor the build.
+
+<p align="center"> ![Slack](https://programmaticponderings.files.wordpress.com/2016/08/img_2109.png?w=375) </p>
+
+You can easily replicate this CI automation using your own continuous integration server, such as Travis CI, [Semaphore](https://semaphoreci.com), or [Jenkins](https://jenkins.io), coupled with a persistent chat application, such as  Glider Labs' [Slack](https://slack.com) or Atlassian's [HipChat](https://www.atlassian.com/software/hipchat). You could also simply push notifications to favorite IM app.
 
 The Travis CI `.travis.yaml` file, custom `gradle.build` Gradle tasks, and the `deploy.sh` script handles the CI automation described, above.
 
