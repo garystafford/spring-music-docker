@@ -2,7 +2,7 @@
 
 _Build and monitor a multi-container, MongoDB-backed, Java Spring web application, and deploy to a test environment using Docker._
 
-![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music1.png)
+![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/springmusicdiagram2.png)
 
 [Introduction](#introduction)  
 [Application Architecture](#application-architecture)  
