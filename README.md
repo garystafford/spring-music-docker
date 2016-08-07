@@ -203,6 +203,8 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 
 Docker Machine provisions a single VirtualBox VM, named `springmusic`, to host all the containers. Next, a Docker data volume and project-specific Docker bridge network are built. Then, Docker Compose builds all images if not present, then builds and deploys (1) NGINX container, (3) Tomcat containers, (1) MongoDB container, and (1) ELK container, onto the VirtualBox VM. VirtualBox provides a quick and easy solution that can be run locally for initial development and testing of the application.
 
+![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/springmusicdiagram2.png)
+
 ##### Docker Compose Upgraded
 This post was recently updated for Docker 1.12.0, to use Docker Compose's v2 YAML file format. The post's example `docker-compose.yml` takes advantage of many of Docker 1.12 and Compose's v2 format improved functionality:
 ```yaml
