@@ -181,7 +181,11 @@ git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" \
 ```
 
 ### Docker
-Docker Compose, using the project's Dockerfiles, pulls base Docker images for NGINX, Tomcat, ELK, and MongoDB, from Docker Hub. Project-specific Docker images are then built, using the Dockerfiles, for NGINX, Tomcat, and MongoDB, based on the base images. While constructing the project-specific Docker images for NGINX and Tomcat, the latest Spring Music build artifacts are pulled and installed into the corresponding Docker images.
+Docker Machine provisions a single VirtualBox VM to host the project’s containers. VirtualBox provides a quick and easy solution that can be run locally for initial development and testing of the application.
+
+Next, the Docker data volume and project-specific Docker bridge network are built.
+
+Next, using the project’s individual Dockerfiles, Docker Compose pulls base Docker images from Docker Hub for NGINX, Tomcat, ELK, and MongoDB. Project-specific Docker images are then built for NGINX, Tomcat, and MongoDB. While constructing the project-specific Docker images for NGINX and Tomcat, the latest Spring Music build artifacts are pulled and installed into the corresponding Docker images.
 
 For example, the abridged NGINX `Dockerfile` looks like:
 ```text
@@ -203,10 +207,7 @@ RUN wget -O /tmp/${STATIC_FILE} ${GITHUB_REPO}/${STATIC_FILE} \
 COPY default.conf /etc/nginx/conf.d/default.conf
 ```
 
-Docker Machine provisions a single VirtualBox VM, named `springmusic`, to host all the containers. VirtualBox provides a quick and easy solution that can be run locally for initial development and testing of the application.
-
-Next, a Docker data volume and project-specific Docker bridge network are built. Then, Docker Compose builds all images if not present, then builds and deploys (1) NGINX container, (3) Tomcat containers, (1) MongoDB container, and (1) ELK container, onto the VirtualBox VM.
-
+Finally, Docker builds and deploys (1) NGINX container, (3) Tomcat containers, (1) MongoDB container, and (1) ELK container, onto the VirtualBox VM.
 
 ![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram.png)
 
@@ -278,12 +279,12 @@ Docker Compose 1.8.0
 Docker Machine 0.8.0
 ```
 
-All of the below commands may be executed with the following single command (`sh ./build_project.sh`). This is useful for working with [Jenkins CI](https://jenkins-ci.org/), [ThoughtWorks go](http://www.thoughtworks.com/products/go-continuous-delivery), or similar CI tools. However, I suggest building the project step-by-step, as shown below, to better understand the process.
+To build the project's VM, Images, and Containers, execute the following command, `sh ./build_project.sh`. This is useful for working with [Jenkins CI](https://jenkins-ci.org/), [ThoughtWorks go](http://www.thoughtworks.com/products/go-continuous-delivery), or similar CI tools. However, I suggest first running each command separately, locally, to understand the build process.
 ```bash
-# clone project
-git clone -b master --single-branch \
-  https://github.com/garystafford/spring-music-docker.git && \
-cd spring-music-docker
+# clone project and rename project folder
+git clone -b springmusic_v2 --single-branch \
+  https://github.com/garystafford/spring-music-docker.git
+mv spring-music-docker/ music/ && cd music/
 
 # provision VirtualBox VM
 docker-machine create --driver virtualbox springmusic
@@ -300,7 +301,7 @@ docker volume create --name music_data
 # ** assumes your project folder is 'music' **
 docker network create -d bridge music_net
 
-# build images and orchestrate start-up of containers (in this order!)
+# build images and orchestrate start-up of containers (in this order)
 docker-compose -p music up -d elk && sleep 15 && \
 docker-compose -p music up -d mongodb && sleep 15 && \
 docker-compose -p music up -d app && \

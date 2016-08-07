@@ -8,10 +8,10 @@
 # usage:          sh ./build_project.sh
 ########################################################################
 
-# clone project
-git clone -b master --single-branch \
-  https://github.com/garystafford/spring-music-docker.git && \
-cd spring-music-docker
+# clone project and rename project folder
+git clone -b springmusic_v2 --single-branch \
+  https://github.com/garystafford/spring-music-docker.git
+mv spring-music-docker/ music/ && cd music/
 
 # provision VirtualBox VM
 docker-machine create --driver virtualbox springmusic
@@ -28,7 +28,7 @@ docker volume create --name music_data
 # ** assumes your project folder is 'music' **
 docker network create -d bridge music_net
 
-# build images and orchestrate start-up of containers (in this order!)
+# build images and orchestrate start-up of containers (in this order)
 docker-compose -p music up -d elk && sleep 15 && \
 docker-compose -p music up -d mongodb && sleep 15 && \
 docker-compose -p music up -d app && \
