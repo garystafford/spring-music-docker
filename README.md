@@ -1,6 +1,7 @@
-[![Build Status](https://semaphoreci.com/api/v1/projects/eed90706-8a71-4b8a-ae7f-3519df02b67d/532587/badge.svg)](https://semaphoreci.com/garystafford/spring-music)  [![Build Status](https://travis-ci.org/garystafford/spring-music.svg?branch=springmusic_v2)](https://travis-ci.org/garystafford/spring-music)
+[![Build Status](https://semaphoreci.com/api/v1/garystafford/spring-music/branches/springmusic_v2/badge.svg)](https://semaphoreci.com/garystafford/spring-music) [![Build Status](https://travis-ci.org/garystafford/spring-music.svg?branch=springmusic_v2)](https://travis-ci.org/garystafford/spring-music)
 
-_Build and monitor a multi-container, MongoDB-backed, Java Spring web application, and deploy to a test environment using Docker._
+## Spring Music Revisited: Build and Deploy Java-Spring-MongoDB Web Application with Docker 1.12
+_Build, deploy, and monitor a multi-container, MongoDB-backed, Java Spring web application using Docker 1.12._
 
 ![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/springmusicdiagram2.png)
 
@@ -12,7 +13,7 @@ _Build and monitor a multi-container, MongoDB-backed, Java Spring web applicatio
 [Helpful Links](#spring-music-application-links)
 
 ### Post Update: Docker 1.12 and Filebeat
-This post and the post's example project were updated in July 2016 to reflect changes in Docker 1.12, including the use of Docker Compose's v2 YAML format, and scaling feature. Presently, the project does make use Docker Swarm for scaling. The project was also updated to use Filebeat with ELK, as opposed to Logspout, used previously.
+This post and the post’s example project were updated from the original post, to incorporate many of the improvements made in Docker 1.12, including the use of Docker Compose’s v2 YAML format. The project was also updated to use Filebeat with ELK, as opposed to Logspout, used previously.
 
 ### Introduction
 In this post, we will demonstrate how to build, deploy, and host a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, monitored with Filebeat and ELK, and all containerized with Docker.
@@ -76,7 +77,7 @@ The Spring Music application will run with MySQL, Postgres, Oracle, MongoDB, Red
 The Spring Music application, hosted by Tomcat, will store and modify record album data in a single instance of MongoDB. MongoDB will be populated with a collection of album data when the Spring Music application first creates the MongoDB database instance.
 
 ##### ELK
-Lastly, the ELK Stack with Filebeat, will aggregate both Docker and Java Log4j log entries, providing debugging and analytics to our demonstration. A similar method for aggregating logs, using Logspout instead of Filebeat, is detailed in a previous [post](https://programmaticponderings.wordpress.com/2015/08/02/log-aggregation-visualization-and-analysis-of-microservices-using-elk-stack-and-logspout/).
+Lastly, the ELK Stack, with Filebeat, will aggregate both Docker and Java Log4j log entries, providing debugging and analytics to our demonstration. A similar method for aggregating logs, using Logspout instead of Filebeat, is detailed in a previous [post](https://programmaticponderings.wordpress.com/2015/08/02/log-aggregation-visualization-and-analysis-of-microservices-using-elk-stack-and-logspout/).
 
 ![Kibana 4 Web Console](https://programmaticponderings.files.wordpress.com/2016/08/kibana4_output_filebeat1.png)
 
@@ -452,6 +453,14 @@ Assuming `springmusic` VM is running at `192.168.99.100`:
 * Kibana Web Console: [192.168.99.100:5601](http://192.168.99.100:5601)
 
 _* The Tomcat user name is `admin` and the password is `t0mcat53rv3r`._
+
+### TODOs
+* Automate the Docker image build and repository publish process
+* Automate the Docker container build and deploy process
+* Add Post-deployment Verification Testing to the project
+* Update Spring Music with latest CF project revisions
+* Add Docker Swarm multi-host capabilities
+* Add scripting to stand-up project on AWS
 
 ### Helpful Links
 * [Cloud Foundry's Spring Music Example](https://github.com/cloudfoundry-samples/spring-music)
