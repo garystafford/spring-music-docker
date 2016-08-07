@@ -269,7 +269,7 @@ networks:
     driver: bridge
 ```
 
-### Building the Docker Environment Locally
+### Building Docker Environment Locally
 Make sure VirtualBox, Docker, Docker Compose, and Docker Machine, are installed and running. At the time of this post, I have the following versions of software installed on my Mac, which is running OS X 10.11.6:
 ```text
 VirtualBox 5.0.26
