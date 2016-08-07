@@ -3,7 +3,7 @@
 ## Spring Music Revisited: Java-Spring-MongoDB Web App with Docker 1.12
 _Build, deploy, and monitor a single-host, multi-container, MongoDB-backed, Java Spring web application using Docker 1.12._
 
-![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/springmusicdiagram2.png)
+![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram.png)
 
 [Introduction](#introduction)  
 [Application Architecture](#application-architecture)  
@@ -12,11 +12,11 @@ _Build, deploy, and monitor a single-host, multi-container, MongoDB-backed, Java
 [Spring Music Application Links](#building-the-environment)  
 [Helpful Links](#spring-music-application-links)
 
-### Post Update: Docker 1.12 and Filebeat
-This post and the post’s example project were updated from the original post, to incorporate many of the improvements made in Docker 1.12, including the use of Docker Compose’s v2 YAML format. The project was also updated to use Filebeat with ELK, as opposed to Logspout, used previously.
-
 ### Introduction
+This post and the post’s example project were updated from a previous post, to incorporate many of the improvements made in Docker 1.12, including the use of Docker Compose’s v2 YAML format. The project was also updated to use Filebeat with ELK, as opposed to Logspout, which used previously.
+
 In this post, we will demonstrate how to build, deploy, and host a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, monitored with Filebeat and ELK, and all containerized with Docker.
+
 
 We will use a sample Java Spring application, [Spring Music](https://github.com/cloudfoundry-samples/spring-music), available on GitHub from Cloud Foundry. The Spring Music sample record album collection application was originally designed to demonstrate the use of database services on [Cloud Foundry](http://www.cloudfoundry.com), using the [Spring Framework](http://www.springframework.org). Instead of Cloud Foundry, we will host the Spring Music application locally, using Docker on VirtualBox, and optionally, AWS.
 
@@ -100,7 +100,7 @@ In this post's example, the two build artifacts, a WAR file for the app and ZIP 
 
 Following a successful build, Travis CI pushes the build artifacts to the `build-artifacts` branch on the same GitHub project. The `build-artifacts` branch acts as a pseudo [binary repository](https://en.wikipedia.org/wiki/Binary_repository_manager) for the project, much like JFrog's [Artifactory](https://www.jfrog.com/artifactory).
 
-![Build Artifact Respository](https://programmaticponderings.files.wordpress.com/2016/08/build-artifacts.png)
+![Build Artifact Repository](https://programmaticponderings.files.wordpress.com/2016/08/build-artifacts.png)
 
 Finally, Travis CI pushes build result notifications to a Slack channel, which eliminates the need to actively monitor the build.
 
@@ -183,8 +183,8 @@ git config user.email "auto-deploy@travis-ci.com"
 
 git add .
 git commit -m "Deploy Travis CI build #${TRAVIS_BUILD_NUMBER} artifacts to GitHub"
-
-git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:build-artifacts > /dev/null 2>&1
+git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" \
+  master:build-artifacts > /dev/null 2>&1
 ```
 
 ### Docker
@@ -212,7 +212,7 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 
 Docker Machine provisions a single VirtualBox VM, named `springmusic`, to host all the containers. Next, a Docker data volume and project-specific Docker bridge network are built. Then, Docker Compose builds all images if not present, then builds and deploys (1) NGINX container, (3) Tomcat containers, (1) MongoDB container, and (1) ELK container, onto the VirtualBox VM. VirtualBox provides a quick and easy solution that can be run locally for initial development and testing of the application.
 
-![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/springmusicdiagram2.png)
+![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram.png)
 
 ##### Docker Compose v2 YAML
 This post was recently updated for Docker 1.12.0, to use Docker Compose's v2 YAML file format. The post's example `docker-compose.yml` takes advantage of many of Docker 1.12 and Compose's v2 format improved functionality:
