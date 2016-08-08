@@ -163,7 +163,7 @@ git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" \
 ```
 You can easily replicate the project’s CI automation using your choice of toolchains. <a href="https://github.com">GitHub</a> or <a href="https://bitbucket.org">BitBucket</a> are good choices for distributed version control. For continuous integration and deployment, I recommend Travis CI, <a href="https://semaphoreci.com">Semaphore</a>, <a href="https://codeship.com">Codeship</a>, or <a href="https://jenkins.io">Jenkins</a>. Couple this with a good persistent chat application, such as Glider Labs’ <a href="https://slack.com">Slack</a> or Atlassian’s <a href="https://www.atlassian.com/software/hipchat">HipChat</a>.
 
-### Building Docker Environment
+### Building the Docker Environment
 Make sure VirtualBox, Docker, Docker Compose, and Docker Machine, are installed and running. At the time of this post, I have the following versions of software installed on my Mac:
 ```text
 Mac OS X 10.11.6
