@@ -1,19 +1,18 @@
 [![Build Status](https://semaphoreci.com/api/v1/garystafford/spring-music/branches/springmusic_v2/badge.svg)](https://semaphoreci.com/garystafford/spring-music) [![Build Status](https://travis-ci.org/garystafford/spring-music.svg?branch=springmusic_v2)](https://travis-ci.org/garystafford/spring-music)
 
 ## Spring Music Revisited: Java-Spring-MongoDB Web App with Docker 1.12
-_Build, deploy, and monitor a single-host, multi-container, MongoDB-backed, Java Spring web application using Docker 1.12._
+_Build, deploy, and monitor a multi-container, MongoDB-backed, Java Spring web application, using the new Docker 1.12._
 
-![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram.png)
+![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram2.png)
 
 ### Introduction
-This post and the post’s example project were updated from a previous post, to incorporate many of the improvements made in Docker 1.12, including the use of Docker Compose’s v2 YAML format. The project was also updated to use Filebeat with ELK, as opposed to Logspout, which used previously.
+This post and the post’s example project represent an update to a previous post, <a href="https://programmaticponderings.wordpress.com/2015/09/07/building-and-deploying-a-multi-container-java-spring-mongodb-application-using-docker/">Build and Deploy a Java-Spring-MongoDB Application using Docker</a>. This new post incorporates many improvements made in Docker 1.12, including the use of Docker Compose’s v2 YAML format. The post’s project was also updated to use Filebeat with ELK, as opposed to Logspout, which was used previously.
 
-In this post, we will demonstrate how to build, deploy, and host a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, monitored with Filebeat and ELK, and all containerized with Docker.
+In this post, we will demonstrate how to build, deploy, and manage a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, monitored with Filebeat and ELK, and all containerized with Docker.
 
+We will use a sample Java Spring application, <a href="https://github.com/cloudfoundry-samples/spring-music">Spring Music</a>, available on GitHub from Cloud Foundry. The Spring Music sample record album collection application was originally designed to demonstrate the use of database services on <a href="http://www.cloudfoundry.com">Cloud Foundry</a>, using the <a href="http://www.springframework.org">Spring Framework</a>. Instead of Cloud Foundry, we will host the Spring Music application locally, using Docker on VirtualBox, and optionally on AWS.
 
-We will use a sample Java Spring application, [Spring Music](https://github.com/cloudfoundry-samples/spring-music), available on GitHub from Cloud Foundry. The Spring Music sample record album collection application was originally designed to demonstrate the use of database services on [Cloud Foundry](http://www.cloudfoundry.com), using the [Spring Framework](http://www.springframework.org). Instead of Cloud Foundry, we will host the Spring Music application locally, using Docker on VirtualBox, and optionally, AWS.
-
-All files necessary to build this project are stored on the `docker_v2` branch of the [garystafford/spring-music-docker](https://github.com/garystafford/spring-music-docker/tree/docker_v2) repository on GitHub. The Spring Music source code is stored on the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music/tree/springmusic_v2) repository, also on GitHub.
+All files necessary to build this project are stored on the <code>docker_v2</code> branch of the <a href="https://github.com/garystafford/spring-music-docker/tree/docker_v2">garystafford/spring-music-docker</a> repository on GitHub. The Spring Music source code is stored on the <code>springmusic_v2</code> branch of the <a href="https://github.com/garystafford/spring-music/tree/springmusic_v2">garystafford/spring-music</a> repository, also on GitHub.
 
 ![Spring Music Application](https://programmaticponderings.files.wordpress.com/2016/08/spring-music2.png)
 
@@ -27,19 +26,12 @@ A few changes were necessary to the original Spring Music application to make it
 * Update versions of several dependencies, including Gradle
 
 ### Application Architecture
-The Java Spring Music application stack contains the following technologies:
-* [Java](http://openjdk.java.net)
-* [Spring Framework](http://projects.spring.io/spring-framework)
-* [NGINX](http://nginx.org)
-* [Apache Tomcat](http://tomcat.apache.org)
-* [MongoDB](http://mongoDB.com)
-* [ELK Stack](https://www.elastic.co/products)
-* [Filebeat](https://www.elastic.co/products/beats/filebeat)
+The Java Spring Music application stack contains the following technologies: <a href="http://openjdk.java.net">Java</a>, <a href="http://projects.spring.io/spring-framework">Spring Framework</a>, <a href="http://nginx.org">NGINX</a>, <a href="http://tomcat.apache.org">Apache Tomcat</a>, <a href="http://mongoDB.com">MongoDB</a>, the <a href="https://www.elastic.co/products">ELK Stack</a>, and <a href="https://www.elastic.co/products/beats/filebeat">Filebeat</a>
 
 ##### NGINX
-For increased performance, the Spring Music web application's static content will be hosted by [NGINX](http://nginx.org). The application's WAR file will be hosted by [Apache Tomcat](http://tomcat.apache.org). Requests for non-static content will be proxied through a single instance of NGINX on the front-end, to a set of load-balanced Tomcat instances on the back-end. To further increase application performance, NGINX will also be configured to allow for browser caching of the static content.
+To increase performance, the Spring Music web application’s static content will be hosted by <a href="http://nginx.org">NGINX</a>. The application’s WAR file will be hosted by <a href="http://tomcat.apache.org">Apache Tomcat</a>. Requests for non-static content will be proxied through NGINX on the front-end, to a set of three load-balanced Tomcat instances on the back-end. To further increase application performance, NGINX will also be configured for browser caching of the static content.
 
-Reverse proxying and caching are configured thought NGINX's `default.conf` file, in the `server` configuration section:
+Reverse proxying and caching are configured thought NGINX’s <code>default.conf</code> file, in the <code>server</code> configuration section:
 ```text
 server {
   listen        80;
@@ -55,7 +47,7 @@ server {
   }
 ```
 
-The three Tomcat instances will be manually configured, using a load-balancing pool, with NGINX's default round-robin load-balancing algorithm. This is also configured through the `default.conf` file, in the `upstream` configuration section:
+The three Tomcat instances will be manually configured for load-balancing using NGINX’s default round-robin load-balancing algorithm. This is configured through the <code>default.conf</code> file, in the <code>upstream</code> configuration section:
 ```text
 upstream backend {
   server music_app_1:8080;
@@ -65,27 +57,17 @@ upstream backend {
 ```
 
 ##### MongoDB
-The Spring Music application will run with MySQL, Postgres, Oracle, MongoDB, Redis, or H2, an in-memory Java SQL database. Given the choice of both SQL and NoSQL databases available for use with the Spring Music application, we will select MongoDB.
+The Spring Music application was designed to run with MySQL, Postgres, Oracle, MongoDB, Redis, or H2, an in-memory Java SQL database. Given the choice of both SQL and NoSQL databases, we will select MongoDB.
 
-The Spring Music application, hosted by Tomcat, will store and modify record album data in a single instance of MongoDB. MongoDB will be populated with a collection of album data when the Spring Music application first creates the MongoDB database instance.
+The Spring Music application, hosted by Tomcat, will store and modify record album data in a single instance of MongoDB. MongoDB will be populated with a collection of album data, from a JSON file, when the Spring Music application first creates the MongoDB database instance.
 
 ##### ELK
-Lastly, the ELK Stack, with Filebeat, will aggregate both Docker and Java Log4j log entries, providing debugging and analytics to our demonstration. A similar method for aggregating logs, using Logspout instead of Filebeat, is detailed in a previous [post](https://programmaticponderings.wordpress.com/2015/08/02/log-aggregation-visualization-and-analysis-of-microservices-using-elk-stack-and-logspout/).
+Lastly, the ELK Stack, with Filebeat, will aggregate both Docker and Java Log4j log entries, providing debugging and analytics to our demonstration. A similar method for aggregating logs, using Logspout instead of Filebeat, can be found in this previous <a href="https://programmaticponderings.wordpress.com/2015/08/02/log-aggregation-visualization-and-analysis-of-microservices-using-elk-stack-and-logspout/">post</a>.
 
 ![Kibana 4 Web Console](https://programmaticponderings.files.wordpress.com/2016/08/kibana4_output_filebeat1.png)
 
-### Build, Deploy, Host
-We will use the following technologies, to build, deploy, and host the Java Spring Music application:
-* [Gradle](https://gradle.org)
-* [git](https://git-scm.com)
-* [GitHub](https://github.com)
-* [Travis CI](https://travis-ci.org)
-* [Oracle VirtualBox](https://www.virtualbox.org)
-* [Docker](https://www.docker.com)
-* [Docker Compose](https://www.docker.com/docker-compose)
-* [Docker Machine](https://www.docker.com/docker-machine)
-* [Docker Hub](https://hub.docker.com)
-* _Optionally,_ [Amazon Web Services (AWS)](http://aws.amazon.com)
+### Build and Publish Artifacts
+We will use the following technologies, to build, publish, deploy, and host the Java Spring Music application: <a href="https://gradle.org">Gradle</a>, <a href="https://git-scm.com">git</a>, <a href="https://github.com">GitHub</a>, <a href="https://travis-ci.org">Travis CI</a>, <a href="https://www.virtualbox.org">Oracle VirtualBox</a>, <a href="https://www.docker.com">Docker</a>, <a href="https://www.docker.com/docker-compose">Docker Compose</a>, <a href="https://www.docker.com/docker-machine">Docker Machine</a>, <a href="https://hub.docker.com">Docker Hub</a>, and optionally, <a href="http://aws.amazon.com">Amazon Web Services (AWS)</a>
 
 In this post's example, the two build artifacts, a WAR file for the app and ZIP file for the static web content, are built automatically by [Travis CI](https://travis-ci.org), whenever changes are pushed to the `springmusic_v2` branch of the [garystafford/spring-music](https://github.com/garystafford/spring-music) repository on GitHub.
 
@@ -209,7 +191,7 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 
 Finally, Docker builds and deploys (1) NGINX container, (3) Tomcat containers, (1) MongoDB container, and (1) ELK container, onto the VirtualBox VM.
 
-![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram.png)
+![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram2.png)
 
 ##### Docker Compose v2 YAML
 This post was recently updated for Docker 1.12.0, to use Docker Compose's v2 YAML file format. The post's example `docker-compose.yml` takes advantage of many of Docker 1.12 and Compose's v2 format improved functionality:
