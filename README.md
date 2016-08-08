@@ -16,6 +16,9 @@ All files necessary to build this project are stored on the <code>docker_v2</cod
 
 ![Spring Music Application](https://programmaticponderings.files.wordpress.com/2016/08/spring-music2.png)
 
+### Application Architecture
+The Java Spring Music application stack contains the following technologies: <a href="http://openjdk.java.net">Java</a>, <a href="http://projects.spring.io/spring-framework">Spring Framework</a>, <a href="http://nginx.org">NGINX</a>, <a href="http://tomcat.apache.org">Apache Tomcat</a>, <a href="http://mongoDB.com">MongoDB</a>, the <a href="https://www.elastic.co/products">ELK Stack</a>, and <a href="https://www.elastic.co/products/beats/filebeat">Filebeat</a>.
+
 A few changes were necessary to the original Spring Music application to make it work for this demonstration. At a high-level, the changes included:
 * Modify MongoDB configuration class to work with non-local, containerized MongoDB instances
 * Add Gradle `warNoStatic` task to build WAR file without the static assets, which will be host separately in NGINX
@@ -24,9 +27,6 @@ A few changes were necessary to the original Spring Music application to make it
 * Add `context.xml` file and `MANIFEST.MF` file to the WAR file
 * Add log4j `syslog` appender to send log entries to Filebeat
 * Update versions of several dependencies, including Gradle
-
-### Application Architecture
-The Java Spring Music application stack contains the following technologies: <a href="http://openjdk.java.net">Java</a>, <a href="http://projects.spring.io/spring-framework">Spring Framework</a>, <a href="http://nginx.org">NGINX</a>, <a href="http://tomcat.apache.org">Apache Tomcat</a>, <a href="http://mongoDB.com">MongoDB</a>, the <a href="https://www.elastic.co/products">ELK Stack</a>, and <a href="https://www.elastic.co/products/beats/filebeat">Filebeat</a>
 
 We will use the following technologies to build, publish, deploy, and host the Java Spring Music application: <a href="https://gradle.org">Gradle</a>, <a href="https://git-scm.com">git</a>, <a href="https://github.com">GitHub</a>, <a href="https://travis-ci.org">Travis CI</a>, <a href="https://www.virtualbox.org">Oracle VirtualBox</a>, <a href="https://www.docker.com">Docker</a>, <a href="https://www.docker.com/docker-compose">Docker Compose</a>, <a href="https://www.docker.com/docker-machine">Docker Machine</a>, <a href="https://hub.docker.com">Docker Hub</a>, and optionally, <a href="http://aws.amazon.com">Amazon Web Services (AWS)</a>.
 
