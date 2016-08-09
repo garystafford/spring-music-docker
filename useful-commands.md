@@ -3,18 +3,20 @@
 #### Stopping, Starting, Re-starting...
 ```bash
 # starting after machine or VBox crash or restart
+eval "$(docker-machine env springmusic)"
 docker-machine start springmusic
 docker-machine regenerate-certs springmusic
-
-docker stop proxy music_app_1 music_app_2 music_app_3 mongodb elk
-# or
-docker rm -f proxy music_app_1 music_app_2 music_app_3 mongodb elk
 
 # orchestrate start-up of containers
 docker start elk && sleep 15 && \
 docker start mongodb && sleep 15 && \
 docker start music_app_1 music_app_2 music_app_3 && sleep 15 && \
 docker start proxy
+
+# stopping containers
+docker stop proxy music_app_1 music_app_2 music_app_3 mongodb elk
+# removing containers
+docker rm -f proxy music_app_1 music_app_2 music_app_3 mongodb elk
 
 # inspect VM
 docker-machine inspect springmusic
@@ -35,7 +37,7 @@ docker logs music_app_1
 
 # remove application containers and images
 docker rm -f music_app_1 music_app_2 music_app_3
-docker rmi music_app music_app
+docker rmi music_app
 
 # remove dangling (unused) volumes
 docker volume rm $(docker volume ls -qf dangling=true)
