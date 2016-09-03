@@ -350,6 +350,7 @@ services:
     - net
     depends_on:
     - mongodb
+    hostname: app
 
   mongodb:
     build: mongodb/
