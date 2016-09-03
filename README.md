@@ -6,6 +6,8 @@ _Build, deploy, and monitor a multi-container, MongoDB-backed, Java Spring web a
 ![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram2.png)
 
 ### Introduction
+_** This post and associated project code updated 9/3/2016 to use Tomcat 8.5.4 with OpenJDK 8.**_
+
 This post and the post’s example project represent an update to a previous post, <a href="https://programmaticponderings.wordpress.com/2015/09/07/building-and-deploying-a-multi-container-java-spring-mongodb-application-using-docker/">Build and Deploy a Java-Spring-MongoDB Application using Docker</a>. This new post incorporates many improvements made in Docker 1.12, including the use of Docker Compose’s v2 YAML format. The post’s project was also updated to use Filebeat with ELK, as opposed to Logspout, which was used previously.
 
 In this post, we will demonstrate how to build, deploy, and manage a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, monitored with Filebeat and ELK, and all containerized with Docker.
