@@ -426,12 +426,12 @@ sebp/elk            latest              07a3e78b01f5        13 days ago         
 # Resulting (6) Docker containers
 $ docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                                                                                      NAMES
-e24f279bb249        music_proxy         "/usr/local/bin/start"   3 minutes ago       Up 3 minutes        0.0.0.0:80->80/tcp, 443/tcp                                                                                proxy
-f77a67a6c907        music_app           "/usr/local/bin/start"   3 minutes ago       Up 3 minutes        0.0.0.0:32775->8080/tcp                                                                                    music_app_3
-c2c210df38da        music_app           "/usr/local/bin/start"   3 minutes ago       Up 3 minutes        0.0.0.0:32776->8080/tcp                                                                                    music_app_2
-80ee8c24f425        music_app           "/usr/local/bin/start"   3 minutes ago       Up 3 minutes        0.0.0.0:32774->8080/tcp                                                                                    music_app_1
-a0d1c5336d6a        music_mongodb       "/entrypoint.sh mongo"   3 minutes ago       Up 3 minutes        27017/tcp                                                                                                  mongodb
-ec47f6c0147d        sebp/elk:latest     "/usr/local/bin/start"   4 minutes ago       Up 4 minutes        0.0.0.0:5000->5000/tcp, 0.0.0.0:5044->5044/tcp, 0.0.0.0:5601->5601/tcp, 0.0.0.0:9200->9200/tcp, 9300/tcp   elk
+b33922767517        music_proxy         "/usr/local/bin/start"   3 hours ago         Up 13 minutes       0.0.0.0:80->80/tcp, 443/tcp                                                                                proxy
+e16d2372f2df        music_app           "/usr/local/bin/start"   3 hours ago         Up About an hour    0.0.0.0:32770->8080/tcp                                                                                    music_app_3
+6b7accea7156        music_app           "/usr/local/bin/start"   3 hours ago         Up About an hour    0.0.0.0:32769->8080/tcp                                                                                    music_app_2
+2e94f766df1b        music_app           "/usr/local/bin/start"   3 hours ago         Up About an hour    0.0.0.0:32768->8080/tcp                                                                                    music_app_1
+71f8dc574148        sebp/elk:latest     "/usr/local/bin/start"   3 hours ago         Up About an hour    0.0.0.0:5000->5000/tcp, 0.0.0.0:5044->5044/tcp, 0.0.0.0:5601->5601/tcp, 0.0.0.0:9200->9200/tcp, 9300/tcp   elk
+f7e7d1af7cca        music_mongodb       "/entrypoint.sh mongo"   20 hours ago        Up About an hour    0.0.0.0:27017->27017/tcp                                                                                   mongodb
 ```
 
 ### Testing the Application
