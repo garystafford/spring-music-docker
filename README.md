@@ -272,7 +272,7 @@ CMD [ "/usr/local/bin/start.sh" ]
 ```
 
 The Tomcat `Dockerfile`:
-```bash
+```text
 # Apache Tomcat image with build artifact
 
 FROM tomcat:8.5.4-jre8
