@@ -31,7 +31,7 @@ A few changes were necessary to the original Spring Music application to make it
 We will use the following technologies to build, publish, deploy, and host the Java Spring Music application: <a href="https://gradle.org">Gradle</a>, <a href="https://git-scm.com">git</a>, <a href="https://github.com">GitHub</a>, <a href="https://travis-ci.org">Travis CI</a>, <a href="https://www.virtualbox.org">Oracle VirtualBox</a>, <a href="https://www.docker.com">Docker</a>, <a href="https://www.docker.com/docker-compose">Docker Compose</a>, <a href="https://www.docker.com/docker-machine">Docker Machine</a>, <a href="https://hub.docker.com">Docker Hub</a>, and optionally, <a href="http://aws.amazon.com">Amazon Web Services (AWS)</a>.
 
 ##### NGINX
-To increase performance, the Spring Music web application’s static content will be hosted by <a href="http://nginx.org">NGINX</a>. The application’s WAR file will be hosted by <a href="http://tomcat.apache.org">Apache Tomcat</a>. Requests for non-static content will be proxied through NGINX on the front-end, to a set of three load-balanced Tomcat instances on the back-end. To further increase application performance, NGINX will also be configured for browser caching of the static content.
+To increase performance, the Spring Music web application’s static content will be hosted by <a href="http://nginx.org">NGINX</a>. The application’s WAR file will be hosted by <a href="http://tomcat.apache.org">Apache Tomcat</a>. Requests for non-static content will be proxied through NGINX on the front-end, to a set of three load-balanced Tomcat instances on the back-end. To further increase application performance, NGINX will also be configured for browser caching of the static content. In many enterprise environments, the use of a Java EE application server, like Tomcat, is still not uncommon.
 
 Reverse proxying and caching are configured thought NGINX’s <code>default.conf</code> file, in the <code>server</code> configuration section:
 ```text
@@ -168,17 +168,19 @@ Make sure VirtualBox, Docker, Docker Compose, and Docker Machine, are installed 
 ```text
 Mac OS X 10.11.6
 VirtualBox 5.0.26
-Docker 1.12.0
+Docker 1.12.1
 Docker Compose 1.8.0
-Docker Machine 0.8.0
+Docker Machine 0.8.1
 ```
 
 To build the project’s host VM, Docker images, and containers, run the build script, using the following command: <code>sh ./build_project.sh</code>. This script is useful when working with CI/CD automation tools, such as <a href="https://jenkins-ci.org/">Jenkins CI </a>or <a href="http://www.thoughtworks.com/products/go-continuous-delivery">ThoughtWorks go</a>. However, I suggest first running each command, locally, to understand the build process.
 ```bash
-# clone project and rename project folder
-git clone -b springmusic_v2 --single-branch \
-  https://github.com/garystafford/spring-music-docker.git
-mv spring-music-docker/ music/ && cd music/
+#!/bin/sh
+
+# clone project
+git clone -b docker_v2 --single-branch \
+  https://github.com/garystafford/spring-music-docker.git \
+  music && cd "$_"
 
 # provision VirtualBox VM
 docker-machine create --driver virtualbox springmusic
@@ -187,9 +189,10 @@ docker-machine create --driver virtualbox springmusic
 docker-machine env springmusic && \
 eval "$(docker-machine env springmusic)"
 
-# create directory to store mongo data on host
+# mount a named volume on host to store mongo and elk data
 # ** assumes your project folder is 'music' **
 docker volume create --name music_data
+docker volume create --name music_elk
 
 # create bridge network for project
 # ** assumes your project folder is 'music' **
@@ -201,6 +204,9 @@ docker-compose -p music up -d mongodb && sleep 15 && \
 docker-compose -p music up -d app && \
 docker-compose scale app=3 && sleep 15 && \
 docker-compose -p music up -d proxy
+
+# optional: configure local DNS resolution for application URL
+#echo "$(docker-machine ip springmusic)   springmusic.com" | sudo tee --append /etc/hosts
 
 # run a simple connectivity test of application
 for i in {1..10}; do curl -I $(docker-machine ip springmusic); done
@@ -216,14 +222,14 @@ Next, the Docker data volume and project-specific Docker bridge network are buil
 
 Next, using the project’s individual Dockerfiles, Docker Compose pulls base Docker images from Docker Hub for NGINX, Tomcat, ELK, and MongoDB. Project-specific immutable Docker images are then built for NGINX, Tomcat, and MongoDB. While constructing the project-specific Docker images for NGINX and Tomcat, the latest Spring Music build artifacts are pulled and installed into the corresponding Docker images.
 
-For example, the NGINX <code>Dockerfile</code> looks like:
+The NGINX `Dockerfile`:
 ```text
 # NGINX image with build artifact
 
-FROM nginx
+FROM nginx:latest
 
 MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
-ENV REFRESHED_AT 2016-07-30
+ENV REFRESHED_AT 2016-09-02
 
 ENV GITHUB_REPO https://github.com/garystafford/spring-music/raw/build-artifacts
 ENV STATIC_FILE spring-music-static.zip
@@ -242,13 +248,64 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 #########################################################################################
 
 ### install Filebeat
-RUN curl -L -O https://download.elastic.co/beats/filebeat/filebeat_1.0.1_amd64.deb \
- && dpkg -i filebeat_1.0.1_amd64.deb \
- && rm filebeat_1.0.1_amd64.deb
+ENV FILEBEAT_VERSION=filebeat_1.2.3_amd64.deb
+RUN curl -L -O https://download.elastic.co/beats/filebeat/${FILEBEAT_VERSION} \
+ && dpkg -i ${FILEBEAT_VERSION} \
+ && rm ${FILEBEAT_VERSION}
 
 ### tweak nginx image set-up
 # remove log symlinks
 RUN rm /var/log/nginx/access.log /var/log/nginx/error.log
+
+### configure Filebeat
+# config file
+ADD filebeat.yml /etc/filebeat/filebeat.yml
+
+# CA cert
+RUN mkdir -p /etc/pki/tls/certs
+ADD logstash-beats.crt /etc/pki/tls/certs/logstash-beats.crt
+
+### start Filebeat
+ADD ./start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+CMD [ "/usr/local/bin/start.sh" ]
+```
+
+The Tomcat `Dockerfile`:
+```bash
+# Apache Tomcat image with build artifact
+
+FROM tomcat:8.5.4-jre8
+
+MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
+ENV REFRESHED_AT 2016-09-02
+
+ENV GITHUB_REPO https://github.com/garystafford/spring-music/raw/build-artifacts
+ENV APP_FILE spring-music.war
+ENV TERM xterm
+ENV JAVA_OPTS -Djava.security.egd=file:/dev/./urandom
+
+RUN apt-get update -qq && \
+  apt-get install -qqy curl wget && \
+  apt-get clean
+
+RUN touch /var/log/spring-music.log && \
+  chmod 666 /var/log/spring-music.log
+
+RUN wget -q -O /usr/local/tomcat/webapps/ROOT.war ${GITHUB_REPO}/${APP_FILE} && \
+  mv /usr/local/tomcat/webapps/ROOT /usr/local/tomcat/webapps/_ROOT
+
+COPY tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
+
+#########################################################################################
+# below from https://github.com/spujadas/elk-docker/blob/master/nginx-filebeat/Dockerfile
+#########################################################################################
+
+### install Filebeat
+ENV FILEBEAT_VERSION=filebeat_1.2.3_amd64.deb
+RUN curl -L -O https://download.elastic.co/beats/filebeat/${FILEBEAT_VERSION} \
+ && dpkg -i ${FILEBEAT_VERSION} \
+ && rm ${FILEBEAT_VERSION}
 
 ### configure Filebeat
 # config file
@@ -296,6 +353,8 @@ services:
 
   mongodb:
     build: mongodb/
+    ports:
+    - 27017:27017
     networks:
     - net
     depends_on:
@@ -303,8 +362,8 @@ services:
     hostname: mongodb
     container_name: mongodb
     volumes:
-    - music_data:/data/db:rw
-    - music_data:/data/configdb:rw
+    - music_data:/data/db
+    - music_data:/data/configdb
 
   elk:
     image: sebp/elk:latest
@@ -315,11 +374,15 @@ services:
     - 5000:5000
     networks:
     - net
+    volumes:
+    - music_elk:/var/lib/elasticsearch
     hostname: elk
     container_name: elk
 
 volumes:
   music_data:
+    external: true
+  music_elk:
     external: true
 
 networks:
@@ -332,40 +395,35 @@ Below are the results of building the project.
 
 Resulting Docker Machine VirtualBox VM:
 ```text
+# Resulting Docker Machine VirtualBox VM:
 $ docker-machine ls
 NAME          ACTIVE   DRIVER       STATE     URL                         SWARM              DOCKER        ERRORS
-springmusic   *        virtualbox   Running   tcp://192.168.99.100:2376                      v1.12.0-rc5
-```
+springmusic   *        virtualbox   Running   tcp://192.168.99.100:2376                      v1.12.1
 
-Resulting external volume:
-```text
+# Resulting external volume:
 $ docker volume ls
 DRIVER              VOLUME NAME
 local               music_data
-```
+local               music_elk
 
-Resulting bridge network:
-```text
+# Resulting bridge network:
 $ docker network ls
 NETWORK ID          NAME             DRIVER              SCOPE
 f564dfa1b440        music_net        bridge              local
-```
 
-Resulting Docker images - (4) base images and (3) project images:
-```text
+# Resulting Docker images - (4) base images and (3) project images:
 $ docker images
-REPOSITORY            TAG                 IMAGE ID            CREATED             SIZE
-music_proxy           latest              54ffc068a492        31 minutes ago      248.1 MB
-music_app             latest              5b22cefca2d9        6 hours ago         415.2 MB
-music_mongodb         latest              73f93a7b8d71        26 hours ago        336.1 MB
-sebp/elk              latest              7916c6886a65        5 days ago          883.1 MB
-mongo                 latest              7f09d45df511        2 weeks ago         336.1 MB
-tomcat                latest              25e98610c7d0        3 weeks ago         359.2 MB
-nginx                 latest              0d409d33b27e        8 weeks ago         182.8 MB
-```
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+music_proxy         latest              7a8dd90bcf32        About an hour ago   250.2 MB
+music_app           latest              c93c713d03b8        About an hour ago   393 MB
+music_mongodb       latest              fbcbbe9d4485        25 hours ago        366.4 MB
 
-Resulting (6) Docker containers:
-```text
+tomcat              8.5.4-jre8          98cc750770ba        2 days ago          334.5 MB
+mongo               latest              48b8b08dca4d        2 days ago          366.4 MB
+nginx               latest              4efb2fcdb1ab        10 days ago         183.4 MB
+sebp/elk            latest              07a3e78b01f5        13 days ago         884.5 MB
+
+# Resulting (6) Docker containers
 $ docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                                                                                      NAMES
 e24f279bb249        music_proxy         "/usr/local/bin/start"   3 minutes ago       Up 3 minutes        0.0.0.0:80->80/tcp, 443/tcp                                                                                proxy
