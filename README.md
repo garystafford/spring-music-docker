@@ -224,6 +224,8 @@ Next, the Docker data volume and project-specific Docker bridge network are buil
 
 Next, using the project’s individual Dockerfiles, Docker Compose pulls base Docker images from Docker Hub for NGINX, Tomcat, ELK, and MongoDB. Project-specific immutable Docker images are then built for NGINX, Tomcat, and MongoDB. While constructing the project-specific Docker images for NGINX and Tomcat, the latest Spring Music build artifacts are pulled and installed into the corresponding Docker images.
 
+Finally, Docker Compose builds and deploys (6) containers onto the VirtualBox VM: (1) NGINX, (3) Tomcat, (1) MongoDB, and (1) ELK.
+
 The NGINX `Dockerfile`:
 ```text
 # NGINX image with build artifact
@@ -323,10 +325,6 @@ RUN chmod +x /usr/local/bin/start.sh
 CMD [ "/usr/local/bin/start.sh" ]
 ```
 
-Finally, Docker Compose builds and deploys (6) containers onto the VirtualBox VM: (1) NGINX, (3) Tomcat, (1) MongoDB, and (1) ELK.
-
-![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram2.png)
-
 ##### Docker Compose v2 YAML
 This post was recently updated for Docker 1.12 to use Docker Compose’s v2 YAML file format. The post’s example <code>docker-compose.yml</code> takes advantage of many of Docker 1.12 and Compose’s v2 format improved functionality:
 ```yaml
@@ -393,6 +391,8 @@ networks:
 ```
 
 ### The Results
+![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram2.png)
+
 Below are the results of building the project.
 ```text
 # Resulting Docker Machine VirtualBox VM:
