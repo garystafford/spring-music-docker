@@ -10,7 +10,7 @@ _** This post and associated project code updated 9/3/2016 to use Tomcat 8.5.4 w
 
 This post and the post’s example project represent an update to a previous post, <a href="https://programmaticponderings.wordpress.com/2015/09/07/building-and-deploying-a-multi-container-java-spring-mongodb-application-using-docker/">Build and Deploy a Java-Spring-MongoDB Application using Docker</a>. This new post incorporates many improvements made in Docker 1.12, including the use of Docker Compose’s v2 YAML format. The post’s project was also updated to use Filebeat with ELK, as opposed to Logspout, which was used previously.
 
-In this post, we will demonstrate how to build, deploy, and manage a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, monitored with Filebeat and ELK, and all containerized with Docker.
+In this post, we will demonstrate how to build, deploy, and manage a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, monitored by ELK with Filebeat, and all containerized with Docker.
 
 We will use a sample Java Spring application, <a href="https://github.com/cloudfoundry-samples/spring-music">Spring Music</a>, available on GitHub from Cloud Foundry. The Spring Music sample record album collection application was originally designed to demonstrate the use of database services on <a href="http://www.cloudfoundry.com">Cloud Foundry</a>, using the <a href="http://www.springframework.org">Spring Framework</a>. Instead of Cloud Foundry, we will host the Spring Music application locally, using Docker on VirtualBox, and optionally on AWS.
 
