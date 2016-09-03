@@ -7,6 +7,13 @@ eval "$(docker-machine env springmusic)"
 docker-machine start springmusic
 docker-machine regenerate-certs springmusic
 
+# orchestrate start-up of containers, tailing the logs...
+docker-compose -p music up -d elk && docker logs elk --follow # ^C to break
+docker-compose -p music up -d mongodb && docker logs mongodb --follow
+docker-compose -p music up -d app && docker logs music_app_1 --follow
+docker-compose scale app=3 && sleep 15
+docker-compose -p music up -d proxy && docker logs proxy --follow
+
 # orchestrate start-up of containers
 docker start elk && sleep 15 && \
 docker start mongodb && sleep 15 && \
