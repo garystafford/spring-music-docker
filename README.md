@@ -439,75 +439,91 @@ Also, note the sharp decrease in the <code>Request-Time</code> between the first
 ```text
 $ for i in {1..10}; do curl -I $(docker-machine ip springmusic);done
 
-HTTP/1.1 200 OK
-Server: nginx/1.11.1
-Date: Thu, 04 Aug 2016 01:18:07 GMT
+# abridged output...
+
+HTTP/1.1 200
+Server: nginx/1.11.3
+Date: Sat, 03 Sep 2016 14:52:15 GMT
 Content-Type: text/html;charset=ISO-8859-1
 Content-Length: 2090
 Connection: keep-alive
 Accept-Ranges: bytes
-ETag: W/"2090-1469971406000"
-Last-Modified: Sun, 31 Jul 2016 13:23:26 GMT
+ETag: W/"2090-1472840828000"
+Last-Modified: Fri, 02 Sep 2016 18:27:08 GMT
 Content-Language: en
-Request-Time: 1.433
+Request-Time: 0.425
 Upstream-Address: 172.18.0.4:8080
-Upstream-Response-Time: 1470273485.810
+Upstream-Response-Time: 1472914335.022
 
-HTTP/1.1 200 OK
-Server: nginx/1.11.1
-Date: Thu, 04 Aug 2016 01:18:07 GMT
+HTTP/1.1 200
+Server: nginx/1.11.3
+Date: Sat, 03 Sep 2016 14:52:16 GMT
 Content-Type: text/html;charset=ISO-8859-1
 Content-Length: 2090
 Connection: keep-alive
 Accept-Ranges: bytes
-ETag: W/"2090-1469971406000"
-Last-Modified: Sun, 31 Jul 2016 13:23:26 GMT
+ETag: W/"2090-1472840828000"
+Last-Modified: Fri, 02 Sep 2016 18:27:08 GMT
 Content-Language: en
-Request-Time: 0.138
-Upstream-Address: 172.18.0.6:8080
-Upstream-Response-Time: 1470273487.479
-
-HTTP/1.1 200 OK
-Server: nginx/1.11.1
-Date: Thu, 04 Aug 2016 01:18:08 GMT
-Content-Type: text/html;charset=ISO-8859-1
-Content-Length: 2090
-Connection: keep-alive
-Accept-Ranges: bytes
-ETag: W/"2090-1469971406000"
-Last-Modified: Sun, 31 Jul 2016 13:23:26 GMT
-Content-Language: en
-Request-Time: 0.253
+Request-Time: 0.849
 Upstream-Address: 172.18.0.5:8080
-Upstream-Response-Time: 1470273487.848
+Upstream-Response-Time: 1472914335.704
 
-HTTP/1.1 200 OK
-Server: nginx/1.11.1
-Date: Thu, 04 Aug 2016 01:18:08 GMT
+HTTP/1.1 200
+Server: nginx/1.11.3
+Date: Sat, 03 Sep 2016 14:52:17 GMT
 Content-Type: text/html;charset=ISO-8859-1
 Content-Length: 2090
 Connection: keep-alive
 Accept-Ranges: bytes
-ETag: W/"2090-1469971406000"
-Last-Modified: Sun, 31 Jul 2016 13:23:26 GMT
+ETag: W/"2090-1472840828000"
+Last-Modified: Fri, 02 Sep 2016 18:27:08 GMT
 Content-Language: en
-Request-Time: 0.007
-Upstream-Address: 172.18.0.4:8080
-Upstream-Response-Time: 1470273488.329
-
-HTTP/1.1 200 OK
-Server: nginx/1.11.1
-Date: Thu, 04 Aug 2016 01:18:08 GMT
-Content-Type: text/html;charset=ISO-8859-1
-Content-Length: 2090
-Connection: keep-alive
-Accept-Ranges: bytes
-ETag: W/"2090-1469971406000"
-Last-Modified: Sun, 31 Jul 2016 13:23:26 GMT
-Content-Language: en
-Request-Time: 0.007
+Request-Time: 0.369
 Upstream-Address: 172.18.0.6:8080
-Upstream-Response-Time: 1470273488.565
+Upstream-Response-Time: 1472914336.804
+
+HTTP/1.1 200
+Server: nginx/1.11.3
+Date: Sat, 03 Sep 2016 14:52:19 GMT
+Content-Type: text/html;charset=ISO-8859-1
+Content-Length: 2090
+Connection: keep-alive
+Accept-Ranges: bytes
+ETag: W/"2090-1472840828000"
+Last-Modified: Fri, 02 Sep 2016 18:27:08 GMT
+Content-Language: en
+Request-Time: 0.012
+Upstream-Address: 172.18.0.4:8080
+Upstream-Response-Time: 1472914339.001
+
+HTTP/1.1 200
+Server: nginx/1.11.3
+Date: Sat, 03 Sep 2016 14:52:18 GMT
+Content-Type: text/html;charset=ISO-8859-1
+Content-Length: 2090
+Connection: keep-alive
+Accept-Ranges: bytes
+ETag: W/"2090-1472840828000"
+Last-Modified: Fri, 02 Sep 2016 18:27:08 GMT
+Content-Language: en
+Request-Time: 0.013
+Upstream-Address: 172.18.0.5:8080
+Upstream-Response-Time: 1472914338.503
+
+HTTP/1.1 200
+Server: nginx/1.11.3
+Date: Sat, 03 Sep 2016 14:52:18 GMT
+Content-Type: text/html;charset=ISO-8859-1
+Content-Length: 2090
+Connection: keep-alive
+Accept-Ranges: bytes
+ETag: W/"2090-1472840828000"
+Last-Modified: Fri, 02 Sep 2016 18:27:08 GMT
+Content-Language: en
+Request-Time: 0.017
+Upstream-Address: 172.18.0.6:8080
+Upstream-Response-Time: 1472914338.754
 ```
 
 ### Spring Music Application Links
