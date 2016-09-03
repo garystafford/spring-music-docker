@@ -392,8 +392,6 @@ networks:
 
 ### The Results
 Below are the results of building the project.
-
-Resulting Docker Machine VirtualBox VM:
 ```text
 # Resulting Docker Machine VirtualBox VM:
 $ docker-machine ls
