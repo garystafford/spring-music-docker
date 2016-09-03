@@ -211,7 +211,7 @@ docker-compose -p music up -d proxy
 #echo "$(docker-machine ip springmusic)   springmusic.com" | sudo tee --append /etc/hosts
 
 # run a simple connectivity test of application
-for i in {1..10}; do curl -I $(docker-machine ip springmusic); done
+for i in {1..9}; do curl -I $(docker-machine ip springmusic); done
 ```
 
 ##### Deploying to AWS
