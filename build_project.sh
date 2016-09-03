@@ -29,11 +29,11 @@ docker volume create --name music_data
 docker network create -d bridge music_net
 
 # build images and orchestrate start-up of containers (in this order)
-docker-compose -p music up -d elk && sleep 15 && \
-docker-compose -p music up -d mongodb && sleep 15 && \
-docker-compose -p music up -d app && \
-docker-compose scale app=3 && sleep 15 && \
-docker-compose -p music up -d proxy && sleep 15
+docker-compose -p music up -d elk && docker logs elk --follow # ^C to break
+docker-compose -p music up -d mongodb && docker logs mongodb --follow
+docker-compose -p music up -d app && docker logs music_app_1 --follow
+docker-compose scale app=3 && sleep 15
+docker-compose -p music up -d proxy && docker logs proxy --follow
 
 # optional: configure local DNS resolution for application URL
 #echo "$(docker-machine ip springmusic)   springmusic.com" | sudo tee --append /etc/hosts

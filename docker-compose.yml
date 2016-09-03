@@ -23,6 +23,8 @@ services:
 
   mongodb:
     build: mongodb/
+    ports:
+    - 27017:27017
     networks:
     - net
     depends_on:
@@ -30,8 +32,8 @@ services:
     hostname: mongodb
     container_name: mongodb
     volumes:
-    - music_data:/data/db:rw
-    - music_data:/data/configdb:rw
+    - music_data:/data/db
+    - music_data:/data/configdb
 
   elk:
     image: sebp/elk:latest
@@ -42,11 +44,15 @@ services:
     - 5000:5000
     networks:
     - net
+    volumes:
+    - music_elk:/var/lib/elasticsearch
     hostname: elk
     container_name: elk
 
 volumes:
   music_data:
+    external: true
+  music_elk:
     external: true
 
 networks:

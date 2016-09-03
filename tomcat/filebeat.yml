@@ -20,8 +20,8 @@ filebeat:
         - /var/log/spring-music.log
       document_type: log4j
       multiline:
-        pattern: '^[[:space:]]+|^Caused by:'
-        negate: false
+        pattern: '^[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}'
+        negate: true
         match: after
     -
       paths:

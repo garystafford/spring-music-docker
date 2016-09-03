@@ -1,9 +1,9 @@
 # NGINX image with build artifact
 
-FROM nginx
+FROM nginx:latest
 
 MAINTAINER Gary A. Stafford <garystafford@rochester.rr.com>
-ENV REFRESHED_AT 2016-07-30
+ENV REFRESHED_AT 2016-09-02
 
 ENV GITHUB_REPO https://github.com/garystafford/spring-music/raw/build-artifacts
 ENV STATIC_FILE spring-music-static.zip
@@ -22,9 +22,10 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 #########################################################################################
 
 ### install Filebeat
-RUN curl -L -O https://download.elastic.co/beats/filebeat/filebeat_1.2.3_amd64.deb \
- && dpkg -i filebeat_1.2.3_amd64.deb \
- && rm filebeat_1.2.3_amd64.deb
+ENV FILEBEAT_VERSION=filebeat_1.2.3_amd64.deb
+RUN curl -L -O https://download.elastic.co/beats/filebeat/${FILEBEAT_VERSION} \
+ && dpkg -i ${FILEBEAT_VERSION} \
+ && rm ${FILEBEAT_VERSION}
 
 ### tweak nginx image set-up
 # remove log symlinks
