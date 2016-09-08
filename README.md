@@ -1,3 +1,4 @@
+###### Build:  
 [![Build Status](https://semaphoreci.com/api/v1/garystafford/spring-music/branches/springmusic_v2/badge.svg)](https://semaphoreci.com/garystafford/spring-music) [![Build Status](https://travis-ci.org/garystafford/spring-music.svg?branch=springmusic_v2)](https://travis-ci.org/garystafford/spring-music)
 
 ## Spring Music Revisited: Java-Spring-MongoDB Web App with Docker 1.12
@@ -10,32 +11,34 @@ _** This post and associated project code updated 9/3/2016 to use Tomcat 8.5.4 w
 
 This post and the post’s example project represent an update to a previous post, <a href="https://programmaticponderings.wordpress.com/2015/09/07/building-and-deploying-a-multi-container-java-spring-mongodb-application-using-docker/">Build and Deploy a Java-Spring-MongoDB Application using Docker</a>. This new post incorporates many improvements made in Docker 1.12, including the use of Docker Compose’s v2 YAML format. The post’s project was also updated to use Filebeat with ELK, as opposed to Logspout, which was used previously.
 
-In this post, we will demonstrate how to build, deploy, and manage a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, monitored by ELK with Filebeat, and all containerized with Docker.
+In this post, we will demonstrate how to build, test, deploy, and manage a Java Spring web application, hosted on Apache Tomcat, load-balanced by NGINX, monitored by ELK with Filebeat, and all containerized with Docker.
 
 We will use a sample Java Spring application, <a href="https://github.com/cloudfoundry-samples/spring-music">Spring Music</a>, available on GitHub from Cloud Foundry. The Spring Music sample record album collection application was originally designed to demonstrate the use of database services on <a href="http://www.cloudfoundry.com">Cloud Foundry</a>, using the <a href="http://www.springframework.org">Spring Framework</a>. Instead of Cloud Foundry, we will host the Spring Music application locally, using Docker on VirtualBox, and optionally on AWS.
 
-All files necessary to build this project are stored on the <code>docker_v2</code> branch of the <a href="https://github.com/garystafford/spring-music-docker/tree/docker_v2">garystafford/spring-music-docker</a> repository on GitHub. The Spring Music source code is stored on the <code>springmusic_v2</code> branch of the <a href="https://github.com/garystafford/spring-music/tree/springmusic_v2">garystafford/spring-music</a> repository, also on GitHub.
+All files necessary to build this project are stored on the `docker_v2` branch of the <a href="https://github.com/garystafford/spring-music-docker/tree/docker_v2">garystafford/spring-music-docker</a> repository on GitHub. The Spring Music source code is stored on the `springmusic_v2` branch of the <a href="https://github.com/garystafford/spring-music/tree/springmusic_v2">garystafford/spring-music</a> repository, also on GitHub.
 
 ![Spring Music Application](https://programmaticponderings.files.wordpress.com/2016/08/spring-music2.png)
 
 ### Application Architecture
-The Java Spring Music application stack contains the following technologies: <a href="http://openjdk.java.net">Java</a>, <a href="http://projects.spring.io/spring-framework">Spring Framework</a>, <a href="http://nginx.org">NGINX</a>, <a href="http://tomcat.apache.org">Apache Tomcat</a>, <a href="http://mongoDB.com">MongoDB</a>, the <a href="https://www.elastic.co/products">ELK Stack</a>, and <a href="https://www.elastic.co/products/beats/filebeat">Filebeat</a>.
+The Java Spring Music application stack contains the following technologies: <a href="http://openjdk.java.net">Java</a>, <a href="http://projects.spring.io/spring-framework">Spring Framework</a>, <a href="http://nginx.org">NGINX</a>, <a href="http://tomcat.apache.org">Apache Tomcat</a>, <a href="http://mongoDB.com">MongoDB</a>, the <a href="https://www.elastic.co/products">ELK Stack</a>, and <a href="https://www.elastic.co/products/beats/filebeat">Filebeat</a>. Testing frameworks include the <a href="http://docs.spring.io/autorepo/docs/spring/4.3.x/spring-framework-reference/html/overview.html#overview-testing">Spring MVC Test Framework</a>, <a href="http://mockito.org/">Mockito</a>, <a href="http://hamcrest.org/JavaHamcrest/">Hamcrest</a>, and <a href="http://junit.org/junit4/">JUnit</a>.
 
 A few changes were necessary to the original Spring Music application to make it work for this demonstration. At a high-level, the changes included:
+* Move from Java 1.7 to 1.8 (including newer Tomcat version)
+* Add a limited number of unit tests for demonstration only
 * Modify MongoDB configuration class to work with non-local, containerized MongoDB instances
 * Add Gradle `warNoStatic` task to build WAR file without the static assets, which will be host separately in NGINX
-* Create new Gradle task, `zipStatic`, to ZIP up the application's static assets for deployment to NGINX
+* Create new Gradle task, `zipStatic`, to ZIP up the application’s static assets for deployment to NGINX
 * Add versioning scheme for build artifacts
 * Add `context.xml` file and `MANIFEST.MF` file to the WAR file
 * Add log4j `syslog` appender to send log entries to Filebeat
-* Update versions of several dependencies, including Gradle
+* Update versions of several dependencies, including Gradle, Spring, and Tomcat
 
 We will use the following technologies to build, publish, deploy, and host the Java Spring Music application: <a href="https://gradle.org">Gradle</a>, <a href="https://git-scm.com">git</a>, <a href="https://github.com">GitHub</a>, <a href="https://travis-ci.org">Travis CI</a>, <a href="https://www.virtualbox.org">Oracle VirtualBox</a>, <a href="https://www.docker.com">Docker</a>, <a href="https://www.docker.com/docker-compose">Docker Compose</a>, <a href="https://www.docker.com/docker-machine">Docker Machine</a>, <a href="https://hub.docker.com">Docker Hub</a>, and optionally, <a href="http://aws.amazon.com">Amazon Web Services (AWS)</a>.
 
 ##### NGINX
 To increase performance, the Spring Music web application’s static content will be hosted by <a href="http://nginx.org">NGINX</a>. The application’s WAR file will be hosted by <a href="http://tomcat.apache.org">Apache Tomcat</a>. Requests for non-static content will be proxied through NGINX on the front-end, to a set of three load-balanced Tomcat instances on the back-end. To further increase application performance, NGINX will also be configured for browser caching of the static content. In many enterprise environments, the use of a Java EE application server, like Tomcat, is still not uncommon.
 
-Reverse proxying and caching are configured thought NGINX’s <code>default.conf</code> file, in the <code>server</code> configuration section:
+Reverse proxying and caching are configured thought NGINX’s `default.conf` file, in the `server` configuration section:
 ```text
 server {
   listen        80;
@@ -51,7 +54,7 @@ server {
   }
 ```
 
-The three Tomcat instances will be manually configured for load-balancing using NGINX’s default round-robin load-balancing algorithm. This is configured through the <code>default.conf</code> file, in the <code>upstream</code> configuration section:
+The three Tomcat instances will be manually configured for load-balancing using NGINX’s default round-robin load-balancing algorithm. This is configured through the `default.conf` file, in the `upstream` configuration section:
 ```text
 upstream backend {
   server music_app_1:8080;
@@ -71,11 +74,11 @@ Lastly, the ELK Stack, with Filebeat, will aggregate both Docker and Java Log4j 
 ![Kibana 4 Web Console](https://programmaticponderings.files.wordpress.com/2016/08/kibana4_output_filebeat1.png)
 
 ### Continuous Integration
-In this post’s example, two build artifacts, a WAR file for the application and ZIP file for the static web content, are built automatically by <a href="https://travis-ci.org">Travis CI</a>, whenever source code changes are pushed to the <code>springmusic_v2</code> branch of the <a href="https://github.com/garystafford/spring-music">garystafford/spring-music</a> repository on GitHub.
+In this post’s example, two build artifacts, a WAR file for the application and ZIP file for the static web content, are built automatically by <a href="https://travis-ci.org">Travis CI</a>, whenever source code changes are pushed to the `springmusic_v2` branch of the <a href="https://github.com/garystafford/spring-music">garystafford/spring-music</a> repository on GitHub.
 
 ![Travis CI Output](https://programmaticponderings.files.wordpress.com/2016/08/travisci1.png)
 
-Following a successful build, Travis CI pushes the build artifacts to the <code>build-artifacts</code> branch on the same GitHub project. The <code>build-artifacts</code> branch acts as a pseudo <a href="https://en.wikipedia.org/wiki/Binary_repository_manager">binary repository</a> for the project, much like JFrog’s <a href="https://www.jfrog.com/artifactory">Artifactory</a>. These artifacts are used later by Docker to build the project’s immutable Docker images and containers.
+Following a successful build and a small number of unit tests, Travis CI pushes the build artifacts to the `build-artifacts` branch on the same GitHub project. The `build-artifacts` branch acts as a pseudo <a href="https://en.wikipedia.org/wiki/Binary_repository_manager">binary repository</a> for the project, much like JFrog’s <a href="https://www.jfrog.com/artifactory">Artifactory</a>. These artifacts are used later by Docker to build the project’s immutable Docker images and containers.
 
 ![Build Artifact Repository](https://programmaticponderings.files.wordpress.com/2016/08/build-artifacts.png)
 
@@ -85,7 +88,7 @@ Travis CI pushes build notifications to a <a href="https://slack.com">Slack</a>
 ![Slack](https://programmaticponderings.files.wordpress.com/2016/08/travisci_slack.png)
 
 ##### Automation Scripting
-The Travis CI <code>.travis.yaml</code> file, custom <code>gradle.build</code> Gradle tasks, and the <code>deploy.sh</code> script handles the CI automation described, above.
+The `.travis.yaml` file, custom `gradle.build` Gradle tasks, and the `deploy_travisci.sh` script, handles the Travis CI automation described, above.
 
 Travis CI `.travis.yaml` file:
 ```yaml
@@ -94,17 +97,19 @@ jdk: oraclejdk8
 before_install:
 - chmod +x gradlew
 before_deploy:
-- chmod ugo+x deploy.sh
+- chmod ugo+x deploy_travisci.sh
 script:
-- bash ./gradlew clean warNoStatic warCopy zipGetVersion zipStatic
-- bash ./deploy.sh
+- "./gradlew clean build"
+- "./gradlew warNoStatic warCopy zipGetVersion zipStatic"
+- sh ./deploy_travisci.sh
 env:
   global:
   - GH_REF: github.com/garystafford/spring-music.git
-  - secure: <your_secure_hash_here>
+  - secure: <GH_TOKEN_secure_hash_here>
+  - secure: <COMMIT_AUTHOR_EMAIL_secure_hash_here>
 notifications:
   slack:
-  - secure: <your_secure_hash_here>
+  - secure: <SLACK_secure_hash_here>
 ```
 
 Custom `gradle.build` tasks:
@@ -145,25 +150,25 @@ task zipStatic(type: Zip) {
 }
 ```
 
-The `deploy.sh` file:
+The `deploy_travisci.sh` file:
 ```bash
 #!/bin/bash
 
-# reference: https://gist.github.com/domenic/ec8b0fc8ab45f39403dd
-
 set -e # exit with nonzero exit code if anything fails
 
-cd build/distributions && git init
+cd build/distributions
+git init
 
 git config user.name "travis-ci"
-git config user.email "auto-deploy@travis-ci.com"
+git config user.email "${COMMIT_AUTHOR_EMAIL}"
 
 git add .
-git commit -m "Deploy Travis CI build #${TRAVIS_BUILD_NUMBER} artifacts to GitHub"
+git commit -m "Deploy Travis CI Build #${TRAVIS_BUILD_NUMBER} artifacts to GitHub"
+
 git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" \
   master:build-artifacts > /dev/null 2>&1
 ```
-You can easily replicate the project’s CI automation using your choice of toolchains. <a href="https://github.com">GitHub</a> or <a href="https://bitbucket.org">BitBucket</a> are good choices for distributed version control. For continuous integration and deployment, I recommend Travis CI, <a href="https://semaphoreci.com">Semaphore</a>, <a href="https://codeship.com">Codeship</a>, or <a href="https://jenkins.io">Jenkins</a>. Couple this with a good persistent chat application, such as Glider Labs’ <a href="https://slack.com">Slack</a> or Atlassian’s <a href="https://www.atlassian.com/software/hipchat">HipChat</a>.
+You can easily replicate the project’s continuous integration automation using your choice of toolchains. <a href="https://github.com">GitHub</a> or <a href="https://bitbucket.org">BitBucket</a> are good choices for distributed version control. For continuous integration and deployment, I recommend Travis CI, <a href="https://semaphoreci.com">Semaphore</a>, <a href="https://codeship.com">Codeship</a>, or <a href="https://jenkins.io">Jenkins</a>. Couple this with a good persistent chat application, such as Glider Labs’ <a href="https://slack.com">Slack</a> or Atlassian’s <a href="https://www.atlassian.com/software/hipchat">HipChat</a>.
 
 ### Building the Docker Environment
 Make sure VirtualBox, Docker, Docker Compose, and Docker Machine, are installed and running. At the time of this post, I have the following versions of software installed on my Mac:
@@ -175,7 +180,7 @@ Docker Compose 1.8.0
 Docker Machine 0.8.1
 ```
 
-To build the project’s host VM, Docker images, and containers, run the build script, using the following command: <code>sh ./build_project.sh</code>. This script is useful when working with CI/CD automation tools, such as <a href="https://jenkins-ci.org/">Jenkins CI </a>or <a href="http://www.thoughtworks.com/products/go-continuous-delivery">ThoughtWorks go</a>. However, I suggest first running each command, locally, to understand the build process.
+To build the project’s host VM, Docker images, and containers, run the build script, using the following command: `sh ./build_project.sh`. This script is useful when working with CI/CD automation tools, such as <a href="https://jenkins-ci.org/">Jenkins CI </a>or <a href="http://www.thoughtworks.com/products/go-continuous-delivery">ThoughtWorks go</a>. However, I suggest first running each command, locally, to understand the build process.
 ```bash
 #!/bin/sh
 
@@ -215,10 +220,10 @@ for i in {1..9}; do curl -I $(docker-machine ip springmusic); done
 ```
 
 ##### Deploying to AWS
-By simply changing the Docker Machine driver to AWS EC2 from VirtualBox, and providing your AWS credentials, the <code>springmusic</code> environment can also be built on AWS.
+By simply changing the Docker Machine driver to AWS EC2 from VirtualBox, and providing your AWS credentials, the `springmusic` environment can also be built on AWS.
 
 ##### Build Process
-Docker Machine provisions a single VirtualBox <code>springmusic</code> VM on which host the project’s containers. VirtualBox provides a quick and easy solution that can be run locally for initial development and testing of the application.
+Docker Machine provisions a single VirtualBox `springmusic` VM on which host the project’s containers. VirtualBox provides a quick and easy solution that can be run locally for initial development and testing of the application.
 
 Next, the Docker data volume and project-specific Docker bridge network are built.
 
@@ -326,7 +331,7 @@ CMD [ "/usr/local/bin/start.sh" ]
 ```
 
 ##### Docker Compose v2 YAML
-This post was recently updated for Docker 1.12 to use Docker Compose’s v2 YAML file format. The post’s example <code>docker-compose.yml</code> takes advantage of many of Docker 1.12 and Compose’s v2 format improved functionality:
+This post was recently updated for Docker 1.12, and to use Docker Compose’s v2 YAML file format. The post’s `docker-compose.yml` takes advantage of improvements in Docker 1.12 and Docker Compose’s v2 YAML.  Improvements to the YAML file include eliminating the need to link containers and expose ports, and the addition of named networks and volumes.
 ```yaml
 version: '2'
 
@@ -436,9 +441,9 @@ f7e7d1af7cca        music_mongodb       "/entrypoint.sh mongo"   20 hours ago   
 ```
 
 ### Testing the Application
-Below are partial results of the curl test, hitting the NGINX endpoint. Note the different IP addresses in the <code>Upstream-Address</code> field between requests. This proves NGINX’s round-robin load-balancing is working across the three Tomcat application instances: <code>music_app_1</code>, <code>music_app_2</code>, and <code>music_app_3</code>.
+Below are partial results of the curl test, hitting the NGINX endpoint. Note the different IP addresses in the `Upstream-Address` field between requests. This proves NGINX’s round-robin load-balancing is working across the three Tomcat application instances: `music_app_1`, `music_app_2`, and `music_app_3`.
 
-Also, note the sharp decrease in the <code>Request-Time</code> between the first three requests and subsequent three requests. The <code>Upstream-Response-Time</code> to the Tomcat instances doesn’t change, yet the total <code>Request-Time</code> is much shorter, due to caching of the application’s static assets by NGINX.
+Also, note the sharp decrease in the `Request-Time` between the first three requests and subsequent three requests. The `Upstream-Response-Time` to the Tomcat instances doesn’t change, yet the total `Request-Time` is much shorter, due to caching of the application’s static assets by NGINX.
 ```text
 $ for i in {1..6}; do curl -I $(docker-machine ip springmusic);done
 
@@ -530,7 +535,7 @@ Upstream-Response-Time: 1472914338.754
 ```
 
 ### Spring Music Application Links
-Assuming the <code>springmusic</code> VM is running at <code>192.168.99.100</code>, the following links can be used to access various project endpoints. Note the (3) Tomcat instances each map to randomly exposed ports. These ports are not required by NGINX, which maps to port 8080 for each instance. The port is only required if you want access to the Tomcat Web Console. The port shown below, 32771, is merely used as an example.
+Assuming the `springmusic` VM is running at `192.168.99.100`, the following links can be used to access various project endpoints. Note the (3) Tomcat instances each map to randomly exposed ports. These ports are not required by NGINX, which maps to port 8080 for each instance. The port is only required if you want access to the Tomcat Web Console. The port shown below, 32771, is merely used as an example.
 
 * Spring Music Application: [192.168.99.100](http://192.168.99.100)
 * NGINX Status: [192.168.99.100/nginx_status](http://192.168.99.100/nginx_status)
@@ -561,3 +566,4 @@ _* The Tomcat user name is `admin` and the password is `t0mcat53rv3r`._
 * [Common conversion patterns for log4j's PatternLayout](http://www.codejava.net/coding/common-conversion-patterns-for-log4js-patternlayout)
 * [Spring @PropertySource example](http://www.mkyong.com/spring/spring-propertysources-example)
 * [Java log4j logging](http://help.papertrailapp.com/kb/configuration/java-log4j-logging/)
+* [Spring Test MVC ResultMatchers](https://github.com/spring-projects/spring-test-mvc/tree/master/src/test/java/org/springframework/test/web/server/samples/standalone/resultmatchers)
