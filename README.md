@@ -2,7 +2,7 @@
 [![Build Status](https://semaphoreci.com/api/v1/garystafford/spring-music/branches/springmusic_v2/badge.svg)](https://semaphoreci.com/garystafford/spring-music) [![Build Status](https://travis-ci.org/garystafford/spring-music.svg?branch=springmusic_v2)](https://travis-ci.org/garystafford/spring-music)
 
 ## Spring Music Revisited: Java-Spring-MongoDB Web App with Docker 1.12
-_Build, deploy, and monitor a multi-container, MongoDB-backed, Java Spring web application, using the new Docker 1.12._
+_Build, deploy, test, and monitor a multi-container, MongoDB-backed, Java Spring web application, using the new Docker 1.12._
 
 ![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram2.png)
 
@@ -441,7 +441,7 @@ f7e7d1af7cca        music_mongodb       "/entrypoint.sh mongo"   20 hours ago   
 ```
 
 ### Testing the Application
-Below are partial results of the curl test, hitting the NGINX endpoint. Note the different IP addresses in the `Upstream-Address` field between requests. This proves NGINX’s round-robin load-balancing is working across the three Tomcat application instances: `music_app_1`, `music_app_2`, and `music_app_3`.
+Below are partial results of the curl test, hitting the NGINX endpoint. Note the different IP addresses in the `Upstream-Address` field between requests. This test proves NGINX’s round-robin load-balancing is working across the three Tomcat application instances: `music_app_1`, `music_app_2`, and `music_app_3`.
 
 Also, note the sharp decrease in the `Request-Time` between the first three requests and subsequent three requests. The `Upstream-Response-Time` to the Tomcat instances doesn’t change, yet the total `Request-Time` is much shorter, due to caching of the application’s static assets by NGINX.
 ```text
