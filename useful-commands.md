@@ -1,6 +1,7 @@
-### Other Useful Commands
+# Other Useful Commands
 
-#### Stopping, Starting, Re-starting...
+## Stopping, Starting, Restarting...
+
 ```bash
 # starting after machine or VBox crash or restart
 eval "$(docker-machine env springmusic)"
@@ -15,22 +16,29 @@ docker-compose scale app=3 && sleep 15
 docker-compose -p music up -d proxy && docker logs proxy --follow
 
 # orchestrate start-up of containers
-docker start elk && sleep 15 && \
-docker start mongodb && sleep 15 && \
-docker start music_app_1 music_app_2 music_app_3 && sleep 15 && \
-docker start proxy
+docker start elk && sleep 15 \
+  && docker start mongodb && sleep 15 \
+  && docker start music_app_1 music_app_2 music_app_3 && sleep 15 \
+  && docker start proxy
+
+# update images
+docker pull mongo:latest \
+  && docker pull nginx:latest \
+  && docker pull sebp/elk:latest \
+  && docker pull tomcat:8.5.4-jre8
 
 # stopping containers
-docker stop proxy music_app_1 music_app_2 music_app_3 mongodb elk
+docker-compose stop
 # removing containers
-docker rm -f proxy music_app_1 music_app_2 music_app_3 mongodb elk
+docker-compose rm
 
 # inspect VM
 docker-machine inspect springmusic
 docker-machine ssh springmusic
 ```
 
-#### Application Startup Issues
+## Application Startup Issues
+
 ```bash
 # stop / start Tomcat
 docker exec -it music_app_1 sh /usr/local/tomcat/bin/startup.sh
@@ -48,9 +56,13 @@ docker rmi music_app
 
 # remove dangling (unused) volumes
 docker volume rm $(docker volume ls -qf dangling=true)
+
+# remove <none> images
+docker rmi $(docker images -a | grep "^<none>" | awk "{print $3}")
 ```
 
-#### Useful Links
-http://elk-docker.readthedocs.io/
-http://pugnusferreus.github.io/blog/2016/01/03/integrating-logstash-with-your-java-application/
-http://techfree.com.br/2016/07/dockerizando-aplicacoes-concorrencia/
+## Useful Links
+
+- <http://elk-docker.readthedocs.io/>
+- <http://pugnusferreus.github.io/blog/2016/01/03/integrating-logstash-with-your-java-application/>
+- <http://techfree.com.br/2016/07/dockerizando-aplicacoes-concorrencia/>
