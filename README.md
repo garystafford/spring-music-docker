@@ -324,21 +324,20 @@ RUN apt-get update -qq \
 
 COPY tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
 
-### install Filebeat
+# install Filebeat
 ENV FILEBEAT_VERSION=filebeat_1.2.3_amd64.deb
 RUN curl -L -O https://download.elastic.co/beats/filebeat/${FILEBEAT_VERSION} \
  && dpkg -i ${FILEBEAT_VERSION} \
  && rm ${FILEBEAT_VERSION}
 
-### configure Filebeat
-# config file
+# configure Filebeat
 ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 # CA cert
 RUN mkdir -p /etc/pki/tls/certs
 ADD logstash-beats.crt /etc/pki/tls/certs/logstash-beats.crt
 
-### start Filebeat
+# start Filebeat
 ADD ./start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 CMD [ "/usr/local/bin/start.sh" ]
