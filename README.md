@@ -6,7 +6,7 @@
 
 _Build, deploy, test, and monitor a multi-container, MongoDB-backed, Java Spring web application, using the new Docker 1.12._
 
-![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram2.png)
+![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram3.png)
 
 ### Introduction
 
@@ -413,7 +413,7 @@ networks:
 
 ### The Results
 
-![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram2.png)
+![Project Architecture](https://programmaticponderings.files.wordpress.com/2016/08/spring-music-diagram3.png)
 
 Below are the results of building the project.
 
