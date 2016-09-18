@@ -28,15 +28,15 @@ The Java Spring Music application stack contains the following technologies: [Ja
 
 A few changes were necessary to the original Spring Music application to make it work for this demonstration. At a high-level, the changes included:
 
-- Move from Java 1.7 to 1.8 (including newer Tomcat version)
-- Add a limited number of unit tests for demonstration only
-- Modify MongoDB configuration class to work with non-local, containerized MongoDB instances
-- Add Gradle `warNoStatic` task to build WAR without static assets, which will be host separately in NGINX
-- Add Gradle `zipStatic` task to ZIP up the application's static assets for deployment to NGINX
-- Add Gradle `zipGetVersion` task with a versioning scheme for build artifacts
-- Add `context.xml` file and `MANIFEST.MF` file to the WAR file
-- Add Log4j `RollingFileAppender` appender to send log entries to Filebeat
-- Update versions of several dependencies, including Gradle, Spring, and Tomcat
+-   Move from Java 1.7 to 1.8 (including newer Tomcat version)
+-   Add unit tests for Continuous Integration demonstration purposes
+-   Modify MongoDB configuration class to work with non-local, containerized MongoDB instances
+-   Add Gradle `warNoStatic` task to build WAR without static assets
+-   Add Gradle `zipStatic` task to ZIP up the application's static assets for deployment to NGINX
+-   Add Gradle `zipGetVersion` task with a versioning scheme for build artifacts
+-   Add `context.xml` file and `MANIFEST.MF` file to the WAR file
+-   Add Log4j `RollingFileAppender` appender to send log entries to Filebeat
+-   Update versions of several dependencies, including Gradle, Spring, and Tomcat
 
 We will use the following technologies to build, publish, deploy, and host the Java Spring Music application: [Gradle](https://gradle.org), [git](https://git-scm.com), [GitHub](https://github.com), [Travis CI](https://travis-ci.org) or [Semaphore](https://semaphoreci.com), [Oracle VirtualBox](https://www.virtualbox.org), [Docker](https://www.docker.com), [Docker Compose](https://www.docker.com/docker-compose), [Docker Machine](https://www.docker.com/docker-machine), [Docker Hub](https://hub.docker.com), and optionally, [Amazon Web Services (AWS)](http://aws.amazon.com).
 
@@ -70,6 +70,8 @@ upstream backend {
   server music_app_3:8080;
 }
 ```
+
+Client requests are received through port `80` on the NGINX server. NGINX redirects requests, which are not for non-static assets, to one of the three Tomcat instances on port `8080`.
 
 #### MongoDB
 
@@ -111,10 +113,11 @@ jdk: oraclejdk8
 before_install:
 - chmod +x gradlew
 before_deploy:
-- chmod ugo+x deploy_travisci.sh
+- chmod ugo+x deploy.sh
 script:
-- "./gradlew clean build"
-- "./gradlew warNoStatic warCopy zipGetVersion zipStatic"
+- ./gradlew wrapper
+- ./gradlew clean build
+- ./gradlew warNoStatic warCopy zipGetVersion zipStatic
 - sh ./deploy_travisci.sh
 env:
   global:
@@ -129,8 +132,14 @@ notifications:
 Custom `gradle.build` tasks:
 
 ```groovy
-// new Gradle build tasks
+// versioning build artifacts
+def major = '2'
+def minor = System.env.TRAVIS_BUILD_NUMBER
+minor = (minor != 'null') ? minor : System.env.SEMAPHORE_BUILD_NUMBER
+minor = (minor != 'null') ? minor : '0'
+def artifact_version = major + '.' + minor
 
+// new Gradle build tasks
 task warNoStatic(type: War) {
   // omit the version from the war file name
   version = ''
@@ -162,6 +171,11 @@ task zipStatic(type: Zip) {
   from 'src/main/webapp/assets'
   appendix = 'static'
   version = ''
+}
+
+tomcatRun {
+    outputFile = file('tomcat.log')
+    configFile = file('src/main/webapp/META-INF/context.xml')
 }
 ```
 
@@ -459,7 +473,7 @@ ef97790a820c        music_app           "/usr/local/bin/start"   2 minutes ago  
 
 ### Testing the Application
 
-Below are partial results of the curl test, hitting the NGINX endpoint. Note the different IP addresses in the `Upstream-Address` field between requests. This test proves NGINX's round-robin load-balancing is working across the three Tomcat application instances: `music_app_1`, `music_app_2`, and `music_app_3`.
+Below are partial results of the curl test, hitting the NGINX endpoint. Note the different IP addresses in the `Upstream-Address` field between requests. This test proves NGINX's round-robin load-balancing is working across the three Tomcat application instances, `music_app_1`, `music_app_2`, and `music_app_3`.
 
 Also, note the sharp decrease in the `Request-Time` between the first three requests and subsequent three requests. The `Upstream-Response-Time` to the Tomcat instances doesn't change, yet the total `Request-Time` is much shorter, due to caching of the application's static assets by NGINX.
 
@@ -555,37 +569,37 @@ Upstream-Response-Time: 1474137233.594
 
 ### Spring Music Application Links
 
-Assuming the `springmusic` VM is running at `192.168.99.100`, the following links can be used to access various project endpoints. Note the (3) Tomcat instances each map to randomly exposed ports. These ports are not required by NGINX, which maps to port 8080 for each instance. The port is only required if you want access to the Tomcat Web Console. The port shown below, 32771, is merely used as an example.
+Assuming the `springmusic` VM is running at `192.168.99.100`, the following links can be used to access various project endpoints. Note the Tomcat instances each map to randomly exposed ports. These ports are not required by NGINX, which maps to port `8080` for each instance. The port is only required if you want access to the Tomcat Web Console. The port shown below, `32771`, is merely used as an example.
 
-- Spring Music Application: [192.168.99.100](http://192.168.99.100)
-- NGINX Status: [192.168.99.100/nginx_status](http://192.168.99.100/nginx_status)
-- Tomcat Web Console - music_app_1*: [192.168.99.100:32771/manager](http://192.168.99.100:32771/manager)
-- Environment Variables - music_app_1: [192.168.99.100:32771/env](http://192.168.99.100:32771/env)
-- Album List (RESTful endpoint) - music_app_1: [192.168.99.100:32771/albums](http://192.168.99.100:32771/albums)
-- Elasticsearch Info: [192.168.99.100:9200](http://192.168.99.100:8082)
-- Elasticsearch Status: [192.168.99.100:9200/_status?pretty](http://192.168.99.100:9200/_status?pretty)
-- Kibana Web Console: [192.168.99.100:5601](http://192.168.99.100:5601)
+-   Spring Music Application: [192.168.99.100](http://192.168.99.100)
+-   NGINX Status: [192.168.99.100/nginx_status](http://192.168.99.100/nginx_status)
+-   Tomcat Web Console - music_app_1\*: [192.168.99.100:32771/manager](http://192.168.99.100:32771/manager)
+-   Environment Variables - music_app_1: [192.168.99.100:32771/env](http://192.168.99.100:32771/env)
+-   Album List (RESTful endpoint) - music_app_1: [192.168.99.100:32771/albums](http://192.168.99.100:32771/albums)
+-   Elasticsearch Info: [192.168.99.100:9200](http://192.168.99.100:8082)
+-   Elasticsearch Status: [192.168.99.100:9200/\_status?pretty](http://192.168.99.100:9200/_status?pretty)
+-   Kibana Web Console: [192.168.99.100:5601](http://192.168.99.100:5601)
 
-_* The Tomcat user name is `admin` and the password is `t0mcat53rv3r`._
+_\* The Tomcat user name is `admin` and the password is `t0mcat53rv3r`._
 
 ### TODOs
 
-- Automate the Docker image build and publish processes
-- Automate the Docker container build and deploy processes
-- Automate post-deployment verification testing of project infrastructure
-- Add Docker Swarm multi-host capabilities with overlay networking
-- Update Spring Music with latest CF Spring Boot project revisions
-- Include scripting example to stand-up project on AWS
-- Add Consul and Consul Template for NGINX configuration
+-   Automate the Docker image build and publish processes
+-   Automate the Docker container build and deploy processes
+-   Automate post-deployment verification testing of project infrastructure
+-   Add Docker Swarm multi-host capabilities with overlay networking
+-   Update Spring Music with latest CF Spring Boot project revisions
+-   Include scripting example to stand-up project on AWS
+-   Add Consul and Consul Template for NGINX configuration
 
 ### Helpful Links
 
-- [Cloud Foundry's Spring Music Example](https://github.com/cloudfoundry-samples/spring-music)
-- [Getting Started with Gradle for Java](https://gradle.org/getting-started-gradle-java)
-- [Introduction to Gradle](https://semaphoreci.com/community/tutorials/introduction-to-gradle)
-- [Spring Framework](http://projects.spring.io/spring-framework)
-- [Understanding Nginx HTTP Proxying, Load Balancing, Buffering, and Caching](https://www.digitalocean.com/community/tutorials/understanding-nginx-http-proxying-load-balancing-buffering-and-caching)
-- [Common conversion patterns for log4j's PatternLayout](http://www.codejava.net/coding/common-conversion-patterns-for-log4js-patternlayout)
-- [Spring @PropertySource example](http://www.mkyong.com/spring/spring-propertysources-example)
-- [Java log4j logging](http://help.papertrailapp.com/kb/configuration/java-log4j-logging/)
-- [Spring Test MVC ResultMatchers](https://github.com/spring-projects/spring-test-mvc/tree/master/src/test/java/org/springframework/test/web/server/samples/standalone/resultmatchers)
+-   [Cloud Foundry's Spring Music Example](https://github.com/cloudfoundry-samples/spring-music)
+-   [Getting Started with Gradle for Java](https://gradle.org/getting-started-gradle-java)
+-   [Introduction to Gradle](https://semaphoreci.com/community/tutorials/introduction-to-gradle)
+-   [Spring Framework](http://projects.spring.io/spring-framework)
+-   [Understanding Nginx HTTP Proxying, Load Balancing, Buffering, and Caching](https://www.digitalocean.com/community/tutorials/understanding-nginx-http-proxying-load-balancing-buffering-and-caching)
+-   [Common conversion patterns for log4j's PatternLayout](http://www.codejava.net/coding/common-conversion-patterns-for-log4js-patternlayout)
+-   [Spring @PropertySource example](http://www.mkyong.com/spring/spring-propertysources-example)
+-   [Java log4j logging](http://help.papertrailapp.com/kb/configuration/java-log4j-logging/)
+-   [Spring Test MVC ResultMatchers](https://github.com/spring-projects/spring-test-mvc/tree/master/src/test/java/org/springframework/test/web/server/samples/standalone/resultmatchers)
