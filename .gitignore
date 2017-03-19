@@ -39,3 +39,4 @@ build/
 /build-artifacts/
 
 tmp info
+**.DS_Store
