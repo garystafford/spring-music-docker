@@ -39,4 +39,8 @@ build/
 /build-artifacts/
 
 tmp info
+<<<<<<< HEAD
+=======
+
+>>>>>>> 60b25a673ed94a418f1f42b231caecdf350e975f
 **.DS_Store
